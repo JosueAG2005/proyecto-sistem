@@ -2,6 +2,19 @@
 <div class="form-group"><label>Nombre *</label>
   <input name="nombre" class="form-control" value="{{ old('nombre', $maquinaria->nombre ?? '') }}" required>
 </div>
+<div class="form-group">
+    <label>Categoría *</label>
+    <select name="categoria_id" class="form-control" required>
+        <option value="">Seleccione una categoría</option>
+        @foreach($categorias as $categoria)
+            <option value="{{ $categoria->id }}"
+                {{ old('categoria_id', $maquinaria->categoria_id ?? '') == $categoria->id ? 'selected' : '' }}>
+                {{ $categoria->nombre }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 <div class="form-group"><label>Tipo *</label>
   <input name="tipo" class="form-control" value="{{ old('tipo', $maquinaria->tipo ?? '') }}" required>
 </div>

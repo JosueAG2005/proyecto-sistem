@@ -6,31 +6,30 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateOrganicoRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        $id = $this->route('organico')->id ?? null;
-
         return [
-            'nombre' => "required|string|max:100|unique:organicos,nombre,{$id}",
-            'categoria' => 'required|string|max:50',
+            'nombre' => 'required|string|max:255|unique:organicos,nombre,' . $this->organico->id,
+            'categoria_id' => 'required|exists:categorias,id',
+
             'precio' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
+
             'fecha_cosecha' => 'nullable|date',
-            'descripcion' => 'nullable|string|max:2000',
+            'descripcion' => 'nullable|string|max:5000',
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'categoria_id.required' => 'La categoría es obligatoria.',
+            'categoria_id.exists'   => 'La categoría seleccionada no es válida.',
+        ];
+    }
 }

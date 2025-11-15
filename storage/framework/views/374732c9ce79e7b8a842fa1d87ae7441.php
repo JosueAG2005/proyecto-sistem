@@ -28,38 +28,58 @@
       <table class="table table-hover mb-0">
         <thead class="thead-light">
           <tr>
-            <th>#</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock</th>
             <th class="text-right pr-3">Acciones</th>
           </tr>
         </thead>
+
         <tbody>
         <?php $__empty_1 = true; $__currentLoopData = $organicos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $o): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
           <tr>
             <td><?php echo e($o->id); ?></td>
-            <td><a href="<?php echo e(route('organicos.show',$o)); ?>"><?php echo e($o->nombre); ?></a></td>
-            <td><?php echo e($o->categoria); ?></td>
-            <td><?php echo e(number_format($o->precio,2)); ?></td>
+
+            <td>
+                <a href="<?php echo e(route('organicos.show', $o)); ?>">
+                    <?php echo e($o->nombre); ?>
+
+                </a>
+            </td>
+
+            
+            <td><?php echo e($o->categoria->nombre ?? 'Sin categoría'); ?></td>
+
+            <td><?php echo e(number_format($o->precio, 2)); ?></td>
             <td><?php echo e($o->stock); ?></td>
+
             <td class="text-right pr-3">
-              <a href="<?php echo e(route('organicos.edit',$o)); ?>" class="btn btn-sm btn-primary">Editar</a>
-              <form action="<?php echo e(route('organicos.destroy',$o)); ?>" method="post" class="d-inline">
+              <a href="<?php echo e(route('organicos.edit', $o)); ?>" class="btn btn-sm btn-primary">Editar</a>
+
+              <form action="<?php echo e(route('organicos.destroy', $o)); ?>" method="post" class="d-inline">
                 <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                 <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</button>
               </form>
             </td>
           </tr>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-          <tr><td colspan="6" class="text-center text-muted">Sin registros</td></tr>
+          <tr>
+            <td colspan="6" class="text-center text-muted">Sin registros</td>
+          </tr>
         <?php endif; ?>
         </tbody>
+
       </table>
     </div>
   </div>
 
   <div class="card-footer">
-    <?php echo e($organicos->appends(['q'=>$q ?? null])->links()); ?>
+    <?php echo e($organicos->appends(['q' => $q ?? null])->links()); ?>
 
   </div>
+
 </div>
 <?php $__env->stopSection(); ?>
 

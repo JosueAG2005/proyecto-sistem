@@ -23,9 +23,10 @@ class MaquinariaController extends Controller
     }
 
     public function create()
-    {
-        return view('maquinarias.create');
-    }
+{
+    $categorias = \App\Models\Categoria::orderBy('nombre')->get();
+    return view('maquinarias.create', compact('categorias'));
+}
 
     public function store(StoreMaquinariaRequest $request)
     {
@@ -39,9 +40,11 @@ class MaquinariaController extends Controller
     }
 
     public function edit(Maquinaria $maquinaria)
-    {
-        return view('maquinarias.edit', compact('maquinaria'));
-    }
+{
+    $categorias = \App\Models\Categoria::orderBy('nombre')->get();
+    return view('maquinarias.edit', compact('maquinaria', 'categorias'));
+}
+
 
     public function update(UpdateMaquinariaRequest $request, Maquinaria $maquinaria)
     {
