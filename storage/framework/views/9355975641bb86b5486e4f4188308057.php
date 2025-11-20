@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@yield('title','Mercado Agrícola')</title>
+  <title><?php echo $__env->yieldContent('title','Mercado Agrícola'); ?></title>
 
-  <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/fontawesome-free/css/all.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+  <link rel="stylesheet" href="<?php echo e(asset('vendor/adminlte/plugins/fontawesome-free/css/all.min.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('vendor/adminlte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('vendor/adminlte/dist/css/adminlte.min.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('css/custom.css')); ?>">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed theme-agro">
@@ -41,60 +41,61 @@
         <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ route('home') }}" class="nav-link">Inicio</a>
+        <a href="<?php echo e(route('home')); ?>" class="nav-link">Inicio</a>
       </li>
     </ul>
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      @auth
+      <?php if(auth()->guard()->check()): ?>
         <li class="nav-item dropdown">
           <a class="nav-link" data-toggle="dropdown" href="#">
             <i class="fas fa-user-circle"></i>
-            <span class="d-none d-md-inline ml-1">{{ auth()->user()->name }}</span>
-            <span class="badge badge-info ml-1">{{ auth()->user()->role_name }}</span>
+            <span class="d-none d-md-inline ml-1"><?php echo e(auth()->user()->name); ?></span>
+            <span class="badge badge-info ml-1"><?php echo e(auth()->user()->role_name); ?></span>
           </a>
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <span class="dropdown-item dropdown-header">
-              {{ auth()->user()->name }}
+              <?php echo e(auth()->user()->name); ?>
+
               <br>
-              <small>{{ auth()->user()->email }}</small>
+              <small><?php echo e(auth()->user()->email); ?></small>
             </span>
             <div class="dropdown-divider"></div>
-            <a href="{{ route('home') }}" class="dropdown-item">
+            <a href="<?php echo e(route('home')); ?>" class="dropdown-item">
               <i class="fas fa-home mr-2"></i> Ir al Inicio
             </a>
-            @if(auth()->user()->isCliente())
-              <a href="{{ route('solicitar-vendedor') }}" class="dropdown-item">
+            <?php if(auth()->user()->isCliente()): ?>
+              <a href="<?php echo e(route('solicitar-vendedor')); ?>" class="dropdown-item">
                 <i class="fas fa-user-tie mr-2"></i> Ser Vendedor
               </a>
-            @endif
-            @if(auth()->user()->isAdmin())
-              <a href="{{ route('admin.solicitudes-vendedor.index') }}" class="dropdown-item">
+            <?php endif; ?>
+            <?php if(auth()->user()->isAdmin()): ?>
+              <a href="<?php echo e(route('admin.solicitudes-vendedor.index')); ?>" class="dropdown-item">
                 <i class="fas fa-clipboard-list mr-2"></i> Solicitudes de Vendedor
               </a>
-            @endif
+            <?php endif; ?>
             <div class="dropdown-divider"></div>
-            <form action="{{ route('logout') }}" method="POST" class="d-inline">
-              @csrf
+            <form action="<?php echo e(route('logout')); ?>" method="POST" class="d-inline">
+              <?php echo csrf_field(); ?>
               <button type="submit" class="dropdown-item dropdown-footer">
                 <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
               </button>
             </form>
           </div>
         </li>
-      @else
+      <?php else: ?>
         <li class="nav-item">
-          <a href="{{ route('login') }}" class="nav-link">
+          <a href="<?php echo e(route('login')); ?>" class="nav-link">
             <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
           </a>
         </li>
         <li class="nav-item">
-          <a href="{{ route('register') }}" class="nav-link">
+          <a href="<?php echo e(route('register')); ?>" class="nav-link">
             <i class="fas fa-user-plus"></i> Registrarse
           </a>
         </li>
-      @endauth
+      <?php endif; ?>
     </ul>
   </nav>
   <!-- /.navbar -->
@@ -102,7 +103,7 @@
   <!-- Sidebar -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
-    <a href="{{ url('/') }}" class="brand-link">
+    <a href="<?php echo e(url('/')); ?>" class="brand-link">
       <span class="brand-text font-weight-light">Mercado Agrícola</span>
     </a>
 
@@ -111,13 +112,13 @@
 
         <ul class="nav nav-pills nav-sidebar flex-column">
 
-          @auth
-            {{-- ===== OPCIONES PARA VENDEDOR Y ADMIN ===== --}}
-            @if(auth()->user()->isVendedor() || auth()->user()->isAdmin())
+          <?php if(auth()->guard()->check()): ?>
+            
+            <?php if(auth()->user()->isVendedor() || auth()->user()->isAdmin()): ?>
               <!-- GANADO -->
               <li class="nav-item">
-                <a href="{{ route('ganados.index') }}"
-                   class="nav-link {{ request()->routeIs('ganados.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('ganados.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('ganados.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-cow"></i>
                   <p>Animales</p>
                 </a>
@@ -125,8 +126,8 @@
 
               <!-- MAQUINARIA -->
               <li class="nav-item">
-                <a href="{{ route('maquinarias.index') }}"
-                   class="nav-link {{ request()->routeIs('maquinarias.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('maquinarias.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('maquinarias.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-tractor"></i>
                   <p>Maquinaria</p>
                 </a>
@@ -134,22 +135,22 @@
 
               <!-- ORGÁNICOS -->
               <li class="nav-item">
-                <a href="{{ route('organicos.index') }}"
-                   class="nav-link {{ request()->routeIs('organicos.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('organicos.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('organicos.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-leaf"></i>
                   <p>Orgánicos</p>
                 </a>
               </li>
-            @endif
+            <?php endif; ?>
 
-            {{-- ===== OPCIONES SOLO PARA ADMIN ===== --}}
-            @if(auth()->user()->isAdmin())
+            
+            <?php if(auth()->user()->isAdmin()): ?>
               <li class="nav-header">CONFIGURACIÓN</li>
               
               <!-- CATEGORÍAS -->
               <li class="nav-item">
-                <a href="{{ route('admin.categorias.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.categorias.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.categorias.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('admin.categorias.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-tags"></i>
                   <p>Categorías</p>
                 </a>
@@ -157,8 +158,8 @@
 
               <!-- TIPOS DE ANIMAL -->
               <li class="nav-item">
-                <a href="{{ route('admin.tipo_animals.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.tipo_animals.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.tipo_animals.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('admin.tipo_animals.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-paw"></i>
                   <p>Tipos de Animal</p>
                 </a>
@@ -166,8 +167,8 @@
 
               <!-- TIPO DE PESO -->
               <li class="nav-item">
-                <a href="{{ route('admin.tipo-pesos.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.tipo-pesos.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.tipo-pesos.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('admin.tipo-pesos.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-weight-hanging"></i>
                   <p>Tipo de Peso</p>
                 </a>
@@ -175,8 +176,8 @@
 
               <!-- DATOS SANITARIOS -->
               <li class="nav-item">
-                <a href="{{ route('admin.datos-sanitarios.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.datos-sanitarios.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.datos-sanitarios.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('admin.datos-sanitarios.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-syringe"></i>
                   <p>Datos Sanitarios</p>
                 </a>
@@ -184,8 +185,8 @@
 
               <!-- RAZAS -->
               <li class="nav-item">
-                <a href="{{ route('admin.razas.index') }}" 
-                   class="nav-link {{ request()->routeIs('admin.razas.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.razas.index')); ?>" 
+                   class="nav-link <?php echo e(request()->routeIs('admin.razas.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-dna"></i>
                   <p>Razas</p>
                 </a>
@@ -195,33 +196,33 @@
 
               <!-- SOLICITUDES DE VENDEDOR -->
               <li class="nav-item">
-                <a href="{{ route('admin.solicitudes-vendedor.index') }}"
-                   class="nav-link {{ request()->routeIs('admin.solicitudes-vendedor.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.solicitudes-vendedor.index')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('admin.solicitudes-vendedor.*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-clipboard-list"></i>
                   <p>Solicitudes de Vendedor</p>
                 </a>
               </li>
               <!-- PEDIDOS -->
               <li class="nav-item">
-                  <a href="{{ route('admin.pedidos.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.pedidos.*') ? 'active' : '' }}">
+                  <a href="<?php echo e(route('admin.pedidos.index')); ?>"
+                    class="nav-link <?php echo e(request()->routeIs('admin.pedidos.*') ? 'active' : ''); ?>">
                       <i class="nav-icon fas fa-receipt"></i>
                       <p>Pedidos</p>
                   </a>
               </li>
-            @endif
+            <?php endif; ?>
 
-            {{-- ===== OPCIONES SOLO PARA CLIENTE ===== --}}
-            @if(auth()->user()->isCliente())
+            
+            <?php if(auth()->user()->isCliente()): ?>
               <li class="nav-item">
-                <a href="{{ route('solicitar-vendedor') }}"
-                   class="nav-link {{ request()->routeIs('solicitar-vendedor*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('solicitar-vendedor')); ?>"
+                   class="nav-link <?php echo e(request()->routeIs('solicitar-vendedor*') ? 'active' : ''); ?>">
                   <i class="nav-icon fas fa-user-tie"></i>
                   <p>Solicitar ser Vendedor</p>
                 </a>
               </li>
-            @endif
-          @endauth
+            <?php endif; ?>
+          <?php endif; ?>
 
         </ul>
 
@@ -236,13 +237,13 @@
 
     <section class="content-header">
       <div class="container-fluid">
-        <h1>@yield('page_title','Panel')</h1>
+        <h1><?php echo $__env->yieldContent('page_title','Panel'); ?></h1>
       </div>
     </section>
 
     <section class="content">
       <div class="container-fluid">
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
       </div>
     </section>
 
@@ -250,15 +251,16 @@
 
   <!-- Footer -->
   <footer class="main-footer text-sm text-center">
-    © {{ date('Y') }} Mercado Agrícola
+    © <?php echo e(date('Y')); ?> Mercado Agrícola
   </footer>
 
 </div>
 
-<script src="{{ asset('vendor/adminlte/plugins/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('vendor/adminlte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
-<script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
+<script src="<?php echo e(asset('vendor/adminlte/plugins/jquery/jquery.min.js')); ?>"></script>
+<script src="<?php echo e(asset('vendor/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js')); ?>"></script>
+<script src="<?php echo e(asset('vendor/adminlte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js')); ?>"></script>
+<script src="<?php echo e(asset('vendor/adminlte/dist/js/adminlte.min.js')); ?>"></script>
 
 </body>
 </html>
+<?php /**PATH C:\Users\Nicole\proy\proyecto-sistem\resources\views/layouts/adminlte.blade.php ENDPATH**/ ?>

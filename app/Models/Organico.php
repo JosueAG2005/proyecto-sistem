@@ -42,4 +42,9 @@ class Organico extends Model
     {
         return $this->belongsTo(\App\Models\User::class);
     }
+    public function detallesPedidos()
+{
+    return $this->hasMany(DetallePedido::class);
+}
+
 }

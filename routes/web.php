@@ -11,6 +11,7 @@ use App\Http\Controllers\RazaController;
 use App\Http\Controllers\SolicitudVendedorController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\PedidoController;
 
 // 1) Raíz -> login (pantalla principal)
 Route::redirect('/', '/login');
@@ -57,6 +58,8 @@ Route::middleware(['auth', 'role.admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('razas', RazaController::class);
     Route::resource('tipo_maquinarias', App\Http\Controllers\TipoMaquinariaController::class);
     Route::resource('marcas_maquinarias', App\Http\Controllers\MarcaMaquinariaController::class);
+    Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+    Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
 });
 
 // ===== VENDEDOR Y ADMINISTRADOR =====
