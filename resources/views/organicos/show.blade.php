@@ -5,22 +5,18 @@
 @section('content')
 <div class="container-fluid">
 
-    {{-- ESTILOS PARA IGUALAR ALTURAS --}}
     <style>
-        /* Tarjeta derecha (nombre, categoría, precio) */
         .panel-info-card {
-            height: 430px; /* igual a la altura de la imagen principal */
+            height: 430px; 
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        /* Tarjetas inferiores (Información Detallada y Ubicación) */
         .panel-equal-card {
-            height: 280px; /* ajusta si quieres más o menos alto */
+            height: 280px; 
         }
 
-        /* En pantallas pequeñas que se adapte normal */
         @media (max-width: 992px) {
             .panel-info-card,
             .panel-equal-card {
@@ -29,7 +25,6 @@
         }
     </style>
 
-    <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-1 text-dark">
@@ -43,12 +38,9 @@
         </a>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <div class="row">
 
-        <!-- IMAGEN PRINCIPAL -->
         <div class="col-lg-6 mb-4">
-
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-body p-0">
 
@@ -75,7 +67,6 @@
                 </div>
             </div>
 
-            <!-- Miniaturas -->
             @if($organico->imagenes->count() > 1)
                 <div class="row">
                     @foreach($organico->imagenes as $img)
@@ -92,7 +83,7 @@
                 </div>
             @endif
 
-        </div> <!-- END LEFT -->
+        </div>
 
         <!-- INFO PRINCIPAL -->
         <div class="col-lg-6">
@@ -102,7 +93,6 @@
 
                     <h2 class="h4 text-dark mb-3">{{ $organico->nombre }}</h2>
 
-                    <!-- Badges -->
                     <div class="mb-3">
                         @if($organico->categoria)
                             <span class="badge badge-success px-3 py-2">
@@ -117,7 +107,6 @@
                         @endif
                     </div>
 
-                    <!-- Precio -->
                     <div class="p-3 mb-3 rounded" style="background:#e8f5e9;">
                         <small class="text-muted d-block mb-1">Precio</small>
                         <h3 class="h4 text-success font-weight-bold">
@@ -125,13 +114,56 @@
                         </h3>
                     </div>
 
+        @auth
+            @if($organico->precio && ($organico->stock ?? 0) > 0)
+                <div class="border-top pt-3 mt-3">
+                    <form action="{{ route('cart.add') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="product_type" value="organico">
+                        <input type="hidden" name="product_id" value="{{ $organico->id }}">
+
+                        <div class="form-row align-items-end">
+                            <div class="col-auto">
+                                <label class="small font-weight-bold text-muted mb-1 d-block">
+                                    Cantidad
+                                </label>
+                                <input type="number"
+                                       name="cantidad"
+                                       class="form-control"
+                                       value="1"
+                                       min="1"
+                                       max="{{ $organico->stock ?? 1 }}"
+                                       required
+                                       style="width: 100px;">
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-success btn-block">
+                                    <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            @elseif(($organico->stock ?? 0) <= 0)
+                <div class="alert alert-warning mt-3 mb-0">
+                    <small><i class="fas fa-exclamation-triangle"></i> Sin stock disponible</small>
+                </div>
+            @endif
+        @else
+            <div class="mt-3 pt-2 border-top">
+                <a href="{{ route('login') }}" class="btn btn-outline-success btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Inicia sesión para comprar
+                </a>
+            </div>
+        @endauth
+
+
                 </div>
             </div>
 
-        </div> <!-- END RIGHT -->
+        </div>
     </div>
 
-    <!-- INFORMACIÓN DETALLADA -->
     <div class="row">
 
         <div class="col-lg-8">
@@ -142,12 +174,8 @@
                         <i class="fas fa-info-circle text-primary"></i> Información Detallada
                     </h5>
                 </div>
-
                 <div class="card-body">
-
                     <div class="row">
-
-                        <!-- Fecha de cosecha -->
                         <div class="col-md-6 mb-3">
                             <div class="d-flex align-items-start">
                                 <i class="fas fa-calendar-alt fa-2x text-primary mr-3"></i>
@@ -162,7 +190,6 @@
                             </div>
                         </div>
 
-                        <!-- Stock -->
                         <div class="col-md-6 mb-3">
                             <div class="d-flex align-items-start">
                                 <i class="fas fa-clipboard-check fa-2x text-success mr-3"></i>
@@ -175,7 +202,6 @@
 
                     </div>
 
-                    <!-- Descripción -->
                     <div class="mt-4 pt-3 border-top">
                         <h6 class="text-muted mb-2">
                             <i class="fas fa-align-left"></i> Descripción
@@ -190,7 +216,6 @@
 
         </div>
 
-        <!-- UBICACIÓN -->
         <div class="col-lg-4">
 
             <div class="card shadow-sm border-0 mb-4 panel-equal-card">
@@ -227,7 +252,6 @@
 
 </div>
 
-<!-- MODAL MAPA -->
 @if($organico->latitud_origen && $organico->longitud_origen)
 <div class="modal fade" id="mapModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -252,7 +276,6 @@
     </div>
 </div>
 
-{{-- Leaflet --}}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -279,7 +302,6 @@ $('#mapModal').on('shown.bs.modal', function () {
 </script>
 @endif
 
-{{-- MODAL PARA VER IMAGEN EN GRANDE --}}
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content bg-transparent border-0">

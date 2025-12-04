@@ -35,74 +35,85 @@ class CartController extends Controller
      * Agregar producto al carrito
      */
     public function add(Request $request)
-    {
-        $request->validate([
-            'product_type' => 'required|in:ganado,maquinaria,organico',
-            'product_id' => 'required|integer',
-            'cantidad' => 'required|integer|min:1',
-            'dias_alquiler' => 'nullable|integer|min:1',
-        ]);
+{
+    $request->validate([
+        'product_type'  => 'required|in:ganado,maquinaria,organico',
+        'product_id'    => 'required|integer',
+        'cantidad'      => 'nullable|integer|min:1',      
+        'dias_alquiler' => 'nullable|integer|min:1',      
+    ]);
 
-        $productType = $request->product_type;
-        $productId = $request->product_id;
+    $productType = $request->product_type;
+    $productId   = $request->product_id;
+
+    if ($productType === 'maquinaria') {
+        $cantidad = $request->dias_alquiler ?? 1;
+    } else {
         $cantidad = $request->cantidad;
-        $diasAlquiler = $request->dias_alquiler ?? 1;
-
-        // Obtener el producto según el tipo
-        switch ($productType) {
-            case 'ganado':
-                $product = Ganado::findOrFail($productId);
-                $precioUnitario = $product->precio ?? 0;
-                $notas = null;
-                break;
-            case 'maquinaria':
-                $product = Maquinaria::findOrFail($productId);
-                $precioUnitario = ($product->precio_dia ?? 0) * $diasAlquiler;
-                $notas = "Alquiler por {$diasAlquiler} día(s)";
-                break;
-            case 'organico':
-                $product = Organico::findOrFail($productId);
-                $precioUnitario = $product->precio ?? 0;
-                $notas = $product->unidad ? "Unidad: {$product->unidad->nombre}" : null;
-                break;
-            default:
-                return back()->with('error', 'Tipo de producto no válido.');
-        }
-
-        if (!$precioUnitario || $precioUnitario <= 0) {
-            return back()->with('error', 'Este producto no tiene precio disponible.');
-        }
-
-        if (in_array($productType, ['ganado', 'organico'])) {
-            $stock = $product->stock ?? 0;
-            if ($stock < $cantidad) {
-                return back()->with('error', "Stock insuficiente. Disponible: {$stock}");
-            }
-        }
-
-        $existingItem = CartItem::where('user_id', Auth::id())
-            ->where('product_type', $productType)
-            ->where('product_id', $productId)
-            ->first();
-
-        if ($existingItem) {
-            $existingItem->cantidad += $cantidad;
-            $existingItem->subtotal = $existingItem->precio_unitario * $existingItem->cantidad;
-            $existingItem->save();
-        } else {
-            CartItem::create([
-                'user_id' => Auth::id(),
-                'product_type' => $productType,
-                'product_id' => $productId,
-                'cantidad' => $cantidad,
-                'precio_unitario' => $precioUnitario,
-                'subtotal' => $precioUnitario * $cantidad,
-                'notas' => $notas,
-            ]);
-        }
-
-        return back()->with('success', 'Producto agregado al carrito correctamente.');
     }
+
+    if (!$cantidad || $cantidad < 1) {
+        return back()->with('error', 'Debes indicar una cantidad válida.');
+    }
+
+    switch ($productType) {
+        case 'ganado':
+            $product = Ganado::findOrFail($productId);
+            $precioUnitario = $product->precio ?? 0;
+            $notas = null;
+            break;
+
+        case 'maquinaria':
+            $product = Maquinaria::findOrFail($productId);
+            $precioUnitario = $product->precio_dia ?? 0;  
+            $notas = "Alquiler por {$cantidad} día(s)";
+            break;
+
+        case 'organico':
+            $product = Organico::findOrFail($productId);
+            $precioUnitario = $product->precio ?? 0;
+            $notas = $product->unidad ? "Unidad: {$product->unidad->nombre}" : null;
+            break;
+
+        default:
+            return back()->with('error', 'Tipo de producto no válido.');
+    }
+
+    if (!$precioUnitario || $precioUnitario <= 0) {
+        return back()->with('error', 'Este producto no tiene precio disponible.');
+    }
+
+    if (in_array($productType, ['ganado', 'organico'])) {
+        $stock = $product->stock ?? 0;
+        if ($stock < $cantidad) {
+            return back()->with('error', "Stock insuficiente. Disponible: {$stock}");
+        }
+    }
+
+    $existingItem = CartItem::where('user_id', Auth::id())
+        ->where('product_type', $productType)
+        ->where('product_id', $productId)
+        ->first();
+
+    if ($existingItem) {
+        $existingItem->cantidad += $cantidad;
+        $existingItem->subtotal = $existingItem->precio_unitario * $existingItem->cantidad;
+        $existingItem->save();
+    } else {
+        CartItem::create([
+            'user_id'        => Auth::id(),
+            'product_type'   => $productType,
+            'product_id'     => $productId,
+            'cantidad'       => $cantidad,                
+            'precio_unitario'=> $precioUnitario,          
+            'subtotal'       => $precioUnitario * $cantidad,
+            'notas'          => $notas,
+        ]);
+    }
+
+    return back()->with('success', 'Producto agregado al carrito correctamente.');
+}
+
 
     /**
      * Actualizar cantidad de un item

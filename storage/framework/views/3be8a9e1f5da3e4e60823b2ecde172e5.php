@@ -216,8 +216,8 @@
               <?php
                 // Mapeo de iconos para categorías comunes
                 $iconosCategorias = [
-                  'animal' => 'fa-cow',
-                  'animales' => 'fa-cow',
+                  'animal' => 'fa-horse',
+                  'animales' => 'fa-horse',
                   'ganado' => 'fa-horse',
                   'maquinaria' => 'fa-tractor',
                   'tractor' => 'fa-tractor',

@@ -126,6 +126,51 @@
                         </h3>
                     </div>
 
+                    
+        <?php if(auth()->guard()->check()): ?>
+            <?php if($organico->precio && ($organico->stock ?? 0) > 0): ?>
+                <div class="border-top pt-3 mt-3">
+                    <form action="<?php echo e(route('cart.add')); ?>" method="POST">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="product_type" value="organico">
+                        <input type="hidden" name="product_id" value="<?php echo e($organico->id); ?>">
+
+                        <div class="form-row align-items-end">
+                            <div class="col-auto">
+                                <label class="small font-weight-bold text-muted mb-1 d-block">
+                                    Cantidad
+                                </label>
+                                <input type="number"
+                                       name="cantidad"
+                                       class="form-control"
+                                       value="1"
+                                       min="1"
+                                       max="<?php echo e($organico->stock ?? 1); ?>"
+                                       required
+                                       style="width: 100px;">
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-success btn-block">
+                                    <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            <?php elseif(($organico->stock ?? 0) <= 0): ?>
+                <div class="alert alert-warning mt-3 mb-0">
+                    <small><i class="fas fa-exclamation-triangle"></i> Sin stock disponible</small>
+                </div>
+            <?php endif; ?>
+        <?php else: ?>
+            <div class="mt-3 pt-2 border-top">
+                <a href="<?php echo e(route('login')); ?>" class="btn btn-outline-success btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Inicia sesión para comprar
+                </a>
+            </div>
+        <?php endif; ?>
+
+
                 </div>
             </div>
 
