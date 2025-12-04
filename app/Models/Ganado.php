@@ -16,7 +16,9 @@ class Ganado extends Model
         'raza_id',
         'edad',
         'tipo_peso_id',
+        'peso_actual',
         'sexo',
+        'cantidad_leche_dia',
         'precio',
         'stock',
         'imagen',
@@ -73,5 +75,37 @@ class Ganado extends Model
     public function imagenes()
     {
         return $this->hasMany(GanadoImagen::class)->orderBy('orden');
+    }
+
+    /**
+     * Relación: un ganado tiene una madre
+     */
+    public function madre()
+    {
+        return $this->belongsTo(Ganado::class, 'madre_id');
+    }
+
+    /**
+     * Relación: un ganado tiene un padre
+     */
+    public function padre()
+    {
+        return $this->belongsTo(Ganado::class, 'padre_id');
+    }
+
+    /**
+     * Relación: un ganado puede ser madre de otros ganados
+     */
+    public function hijosMadre()
+    {
+        return $this->hasMany(Ganado::class, 'madre_id');
+    }
+
+    /**
+     * Relación: un ganado puede ser padre de otros ganados
+     */
+    public function hijosPadre()
+    {
+        return $this->hasMany(Ganado::class, 'padre_id');
     }
 }

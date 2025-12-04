@@ -188,13 +188,16 @@
               <div class="animal-card">
 
                 
+                <?php
+                  $imagenPrincipal = $ganado->imagenes->first()->ruta ?? $ganado->imagen ?? null;
+                ?>
                 <div class="animal-image-wrapper"
-                     <?php if($ganado->imagen): ?>
-                       onclick="window.open('<?php echo e(asset('storage/'.$ganado->imagen)); ?>', '_blank')"
+                     <?php if($imagenPrincipal): ?>
+                       onclick="window.open('<?php echo e(asset('storage/'.$imagenPrincipal)); ?>', '_blank')"
                        title="Click para ver imagen completa"
                      <?php endif; ?>>
-                  <?php if($ganado->imagen): ?>
-                    <img src="<?php echo e(asset('storage/'.$ganado->imagen)); ?>"
+                  <?php if($imagenPrincipal): ?>
+                    <img src="<?php echo e(asset('storage/'.$imagenPrincipal)); ?>"
                          alt="<?php echo e($ganado->nombre); ?>"
                          class="animal-image">
                   <?php else: ?>

@@ -19,7 +19,7 @@ class GanadoController extends Controller
      */
     public function index()
     {
-        $ganados = Ganado::with(['categoria','raza','tipoAnimal','tipoPeso','datoSanitario'])
+        $ganados = Ganado::with(['categoria','raza','tipoAnimal','tipoPeso','datoSanitario','imagenes'])
                         ->orderBy('id', 'desc')
                         ->paginate(10);
 
@@ -31,7 +31,7 @@ class GanadoController extends Controller
      */
     public function show(Ganado $ganado)
     {
-        $ganado->load(['categoria', 'tipoAnimal', 'tipoPeso', 'raza', 'datoSanitario', 'imagenes']);
+        $ganado->load(['categoria', 'tipoAnimal', 'tipoPeso', 'raza', 'datoSanitario', 'imagenes', 'user.role']);
         return view('ganados.show', compact('ganado'));
     }
 
@@ -67,32 +67,42 @@ class GanadoController extends Controller
         'raza_id'         => 'nullable|exists:razas,id',
         'edad_anos'       => 'required|integer|min:0|max:25',
         'edad_meses'      => 'required|integer|min:0|max:11',
+        'edad_dias'       => 'required|integer|min:0|max:30',
         'tipo_peso_id'    => 'required|exists:tipo_pesos,id',
+        'peso_actual'     => 'nullable|numeric|min:0',
         'sexo'            => 'nullable|string',
+        'cantidad_leche_dia' => 'nullable|numeric|min:0',
         'descripcion'     => 'nullable|string',
         'precio'          => 'nullable|numeric|min:0',
         'stock'            => 'required|integer|min:0',
         'imagenes.*'      => 'nullable|image|max:2048',
         'categoria_id'    => 'required|exists:categorias,id',
-        'fecha_publicacion' => 'nullable|date',
         'ubicacion' => 'nullable|string|max:255',
         'latitud' => 'nullable|numeric',
         'longitud' => 'nullable|numeric',
         'dato_sanitario_id' => 'nullable|exists:datos_sanitarios,id',
     ]);
 
+    // Calcular edad total en meses (años*12 + meses, los días se redondean a meses si >= 15 días)
+    $edadMeses = ($request->edad_anos * 12) + $request->edad_meses;
+    if ($request->edad_dias >= 15) {
+        $edadMeses += 1; // Redondear hacia arriba si tiene 15 o más días
+    }
+
     $data = [
         'nombre' => $request->nombre,
         'tipo_animal_id' => $request->tipo_animal_id,
         'raza_id' => $request->raza_id,
-        'edad' => ($request->edad_anos * 12) + $request->edad_meses,
+        'edad' => $edadMeses,
         'tipo_peso_id' => $request->tipo_peso_id,
+        'peso_actual' => $request->peso_actual,
         'sexo' => $request->sexo,
+        'cantidad_leche_dia' => $request->cantidad_leche_dia,
         'descripcion' => $request->descripcion,
         'precio' => $request->precio,
         'stock' => $request->stock,
         'categoria_id' => $request->categoria_id,
-        'fecha_publicacion' => $request->fecha_publicacion,
+        'fecha_publicacion' => now(), // Fecha automática al crear
         'ubicacion' => $request->ubicacion,
         'latitud' => $request->latitud,
         'longitud' => $request->longitud,
@@ -175,7 +185,10 @@ class GanadoController extends Controller
         'raza_id' => 'nullable|exists:razas,id',
         'edad_anos' => 'required|integer|min:0|max:25',
         'edad_meses' => 'required|integer|min:0|max:11',
+        'edad_dias' => 'required|integer|min:0|max:30',
+        'peso_actual' => 'nullable|numeric|min:0',
         'sexo' => 'nullable|string',
+        'cantidad_leche_dia' => 'nullable|numeric|min:0',
         'descripcion' => 'nullable|string',
         'precio' => 'nullable|numeric|min:0',
         'stock' => 'required|integer|min:0',
@@ -185,17 +198,24 @@ class GanadoController extends Controller
         'ubicacion' => 'nullable|string|max:255',
         'latitud' => 'nullable|numeric',
         'longitud' => 'nullable|numeric',
-        'fecha_publicacion' => 'nullable|date',
         'dato_sanitario_id' => 'nullable|exists:datos_sanitarios,id',
     ]);
+
+    // Calcular edad total en meses (años*12 + meses, los días se redondean a meses si >= 15 días)
+    $edadMeses = ($request->edad_anos * 12) + $request->edad_meses;
+    if ($request->edad_dias >= 15) {
+        $edadMeses += 1; // Redondear hacia arriba si tiene 15 o más días
+    }
 
     $data = [
         'nombre' => $request->nombre,
         'tipo_animal_id' => $request->tipo_animal_id,
         'raza_id' => $request->raza_id,
-        'edad' => ($request->edad_anos * 12) + $request->edad_meses,
+        'edad' => $edadMeses,
         'tipo_peso_id' => $request->tipo_peso_id,
+        'peso_actual' => $request->peso_actual,
         'sexo' => $request->sexo,
+        'cantidad_leche_dia' => $request->cantidad_leche_dia,
         'descripcion' => $request->descripcion,
         'precio' => $request->precio,
         'stock' => $request->stock,
@@ -207,7 +227,8 @@ class GanadoController extends Controller
         'municipio' => $request->municipio,
         'provincia' => $request->provincia,
         'ciudad' => $request->ciudad,
-        'fecha_publicacion' => $request->fecha_publicacion,
+        // Mantener la fecha de publicación existente, o establecerla si no existe
+        'fecha_publicacion' => $ganado->fecha_publicacion ?? now(),
         'dato_sanitario_id' => $request->dato_sanitario_id ?? null,
     ];
 

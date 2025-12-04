@@ -36,7 +36,7 @@ class HomeController extends Controller
         // Si hay búsqueda o filtros, buscar (siempre mostrar todos los tipos)
         if ($q || $categoria_id || $tipo_animal_id || $raza_id) {
             // Búsqueda en Ganados (siempre mostrar)
-            $ganadosQuery = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario'])
+            $ganadosQuery = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario', 'imagenes'])
                 ->where(function($query) use ($q) {
                     if ($q) {
                         $query->where('nombre', 'ilike', "%{$q}%")
@@ -96,7 +96,7 @@ class HomeController extends Controller
             $organicos = $organicosQuery->orderBy('created_at', 'desc')->paginate(12);
         } else {
             // Sin búsqueda: mostrar productos destacados/recientes (últimos 3 de cada tipo)
-            $ganados = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario'])
+            $ganados = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario', 'imagenes'])
                 ->orderBy('created_at', 'desc')
                 ->take(3)
                 ->get();
@@ -145,7 +145,7 @@ class HomeController extends Controller
         $organicos = collect();
         
         // Búsqueda en Ganados (siempre mostrar, sin filtro de tipo)
-        $ganadosQuery = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario'])
+        $ganadosQuery = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario', 'imagenes'])
             ->where(function($query) use ($q) {
                 if ($q) {
                     $query->where('nombre', 'ilike', "%{$q}%")
@@ -202,7 +202,7 @@ class HomeController extends Controller
         $misOrganicos = collect();
         
         if (auth()->check() && (auth()->user()->isVendedor() || auth()->user()->isAdmin())) {
-            $misGanados = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario'])
+            $misGanados = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario', 'imagenes'])
                 ->where('user_id', auth()->id())
                 ->orderBy('created_at', 'desc')
                 ->get();

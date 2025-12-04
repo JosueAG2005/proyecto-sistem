@@ -61,6 +61,21 @@ class DatoSanitarioController extends Controller
         'veterinario' => 'nullable|string',
         'observaciones' => 'nullable|string',
         'certificado_imagen' => 'nullable|image|max:5120', // 5MB máximo
+        'certificado_campeon_imagen' => 'nullable|image|max:5120', // 5MB máximo
+        'logro_campeon_raza' => 'nullable|boolean',
+        'logro_gran_campeon_macho' => 'nullable|boolean',
+        'logro_gran_campeon_hembra' => 'nullable|boolean',
+        'logro_mejor_ubre' => 'nullable|boolean',
+        'logro_campeona_litros_dia' => 'nullable|boolean',
+        'logro_mejor_lactancia' => 'nullable|boolean',
+        'logro_mejor_calidad_leche' => 'nullable|boolean',
+        'logro_mejor_novillo' => 'nullable|boolean',
+        'logro_gran_campeon_carne' => 'nullable|boolean',
+        'logro_mejor_semental' => 'nullable|boolean',
+        'logro_mejor_madre' => 'nullable|boolean',
+        'logro_mejor_padre' => 'nullable|boolean',
+        'logro_mejor_fertilidad' => 'nullable|boolean',
+        'arbol_genealogico' => 'nullable|file|mimes:pdf,jpg,jpeg,png,gif|max:10240', // 10MB máximo
         'marca_ganado' => 'nullable|string|max:255',
         'marca_ganado_foto' => 'nullable|image|max:5120', // 5MB máximo
         'senal_numero' => 'nullable|string|max:255',
@@ -81,8 +96,6 @@ class DatoSanitarioController extends Controller
     $data = $request->only([
         'ganado_id',
         'vacuna',
-        'vacunado_fiebre_aftosa',
-        'vacunado_antirabica',
         'tratamiento',
         'medicamento',
         'fecha_aplicacion',
@@ -101,9 +114,34 @@ class DatoSanitarioController extends Controller
     $data['vacunado_fiebre_aftosa'] = $request->has('vacunado_fiebre_aftosa') ? true : false;
     $data['vacunado_antirabica'] = $request->has('vacunado_antirabica') ? true : false;
 
+    // Logros
+    $data['logro_campeon_raza'] = $request->has('logro_campeon_raza') ? true : false;
+    $data['logro_gran_campeon_macho'] = $request->has('logro_gran_campeon_macho') ? true : false;
+    $data['logro_gran_campeon_hembra'] = $request->has('logro_gran_campeon_hembra') ? true : false;
+    $data['logro_mejor_ubre'] = $request->has('logro_mejor_ubre') ? true : false;
+    $data['logro_campeona_litros_dia'] = $request->has('logro_campeona_litros_dia') ? true : false;
+    $data['logro_mejor_lactancia'] = $request->has('logro_mejor_lactancia') ? true : false;
+    $data['logro_mejor_calidad_leche'] = $request->has('logro_mejor_calidad_leche') ? true : false;
+    $data['logro_mejor_novillo'] = $request->has('logro_mejor_novillo') ? true : false;
+    $data['logro_gran_campeon_carne'] = $request->has('logro_gran_campeon_carne') ? true : false;
+    $data['logro_mejor_semental'] = $request->has('logro_mejor_semental') ? true : false;
+    $data['logro_mejor_madre'] = $request->has('logro_mejor_madre') ? true : false;
+    $data['logro_mejor_padre'] = $request->has('logro_mejor_padre') ? true : false;
+    $data['logro_mejor_fertilidad'] = $request->has('logro_mejor_fertilidad') ? true : false;
+
     // Manejar la imagen del certificado
     if ($request->hasFile('certificado_imagen')) {
         $data['certificado_imagen'] = $request->file('certificado_imagen')->store('certificados_senasag', 'public');
+    }
+
+    // Manejar la imagen del certificado de campeón
+    if ($request->hasFile('certificado_campeon_imagen')) {
+        $data['certificado_campeon_imagen'] = $request->file('certificado_campeon_imagen')->store('certificados_campeon', 'public');
+    }
+
+    // Manejar el archivo del árbol genealógico
+    if ($request->hasFile('arbol_genealogico')) {
+        $data['arbol_genealogico'] = $request->file('arbol_genealogico')->store('arboles_genealogicos', 'public');
     }
 
     // Manejar la imagen de la marca del ganado
@@ -166,6 +204,21 @@ class DatoSanitarioController extends Controller
         'veterinario' => 'nullable|string',
         'observaciones' => 'nullable|string',
         'certificado_imagen' => 'nullable|image|max:5120', // 5MB máximo
+        'certificado_campeon_imagen' => 'nullable|image|max:5120', // 5MB máximo
+        'logro_campeon_raza' => 'nullable|boolean',
+        'logro_gran_campeon_macho' => 'nullable|boolean',
+        'logro_gran_campeon_hembra' => 'nullable|boolean',
+        'logro_mejor_ubre' => 'nullable|boolean',
+        'logro_campeona_litros_dia' => 'nullable|boolean',
+        'logro_mejor_lactancia' => 'nullable|boolean',
+        'logro_mejor_calidad_leche' => 'nullable|boolean',
+        'logro_mejor_novillo' => 'nullable|boolean',
+        'logro_gran_campeon_carne' => 'nullable|boolean',
+        'logro_mejor_semental' => 'nullable|boolean',
+        'logro_mejor_madre' => 'nullable|boolean',
+        'logro_mejor_padre' => 'nullable|boolean',
+        'logro_mejor_fertilidad' => 'nullable|boolean',
+        'arbol_genealogico' => 'nullable|file|mimes:pdf,jpg,jpeg,png,gif|max:10240', // 10MB máximo
         'marca_ganado' => 'nullable|string|max:255',
         'marca_ganado_foto' => 'nullable|image|max:5120', // 5MB máximo
         'senal_numero' => 'nullable|string|max:255',
@@ -203,8 +256,6 @@ class DatoSanitarioController extends Controller
     $data = $request->only([
         'ganado_id',
         'vacuna',
-        'vacunado_fiebre_aftosa',
-        'vacunado_antirabica',
         'tratamiento',
         'medicamento',
         'fecha_aplicacion',
@@ -220,6 +271,21 @@ class DatoSanitarioController extends Controller
     $data['vacunado_fiebre_aftosa'] = $request->has('vacunado_fiebre_aftosa') ? true : false;
     $data['vacunado_antirabica'] = $request->has('vacunado_antirabica') ? true : false;
 
+    // Logros
+    $data['logro_campeon_raza'] = $request->has('logro_campeon_raza') ? true : false;
+    $data['logro_gran_campeon_macho'] = $request->has('logro_gran_campeon_macho') ? true : false;
+    $data['logro_gran_campeon_hembra'] = $request->has('logro_gran_campeon_hembra') ? true : false;
+    $data['logro_mejor_ubre'] = $request->has('logro_mejor_ubre') ? true : false;
+    $data['logro_campeona_litros_dia'] = $request->has('logro_campeona_litros_dia') ? true : false;
+    $data['logro_mejor_lactancia'] = $request->has('logro_mejor_lactancia') ? true : false;
+    $data['logro_mejor_calidad_leche'] = $request->has('logro_mejor_calidad_leche') ? true : false;
+    $data['logro_mejor_novillo'] = $request->has('logro_mejor_novillo') ? true : false;
+    $data['logro_gran_campeon_carne'] = $request->has('logro_gran_campeon_carne') ? true : false;
+    $data['logro_mejor_semental'] = $request->has('logro_mejor_semental') ? true : false;
+    $data['logro_mejor_madre'] = $request->has('logro_mejor_madre') ? true : false;
+    $data['logro_mejor_padre'] = $request->has('logro_mejor_padre') ? true : false;
+    $data['logro_mejor_fertilidad'] = $request->has('logro_mejor_fertilidad') ? true : false;
+
     // Manejar la imagen del certificado
     if ($request->hasFile('certificado_imagen')) {
         // Eliminar la imagen anterior si existe
@@ -227,6 +293,24 @@ class DatoSanitarioController extends Controller
             Storage::disk('public')->delete($datos_sanitario->certificado_imagen);
         }
         $data['certificado_imagen'] = $request->file('certificado_imagen')->store('certificados_senasag', 'public');
+    }
+
+    // Manejar la imagen del certificado de campeón
+    if ($request->hasFile('certificado_campeon_imagen')) {
+        // Eliminar la imagen anterior si existe
+        if ($datos_sanitario->certificado_campeon_imagen && Storage::disk('public')->exists($datos_sanitario->certificado_campeon_imagen)) {
+            Storage::disk('public')->delete($datos_sanitario->certificado_campeon_imagen);
+        }
+        $data['certificado_campeon_imagen'] = $request->file('certificado_campeon_imagen')->store('certificados_campeon', 'public');
+    }
+
+    // Manejar el archivo del árbol genealógico
+    if ($request->hasFile('arbol_genealogico')) {
+        // Eliminar el archivo anterior si existe
+        if ($datos_sanitario->arbol_genealogico && Storage::disk('public')->exists($datos_sanitario->arbol_genealogico)) {
+            Storage::disk('public')->delete($datos_sanitario->arbol_genealogico);
+        }
+        $data['arbol_genealogico'] = $request->file('arbol_genealogico')->store('arboles_genealogicos', 'public');
     }
 
     // Manejar la imagen de la marca del ganado

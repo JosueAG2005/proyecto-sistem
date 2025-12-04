@@ -1,6 +1,46 @@
 <?php $__env->startSection('title','Inicio'); ?>
 
 <?php $__env->startSection('content'); ?>
+<style>
+  .ganado-card {
+    transition: all 0.3s ease;
+    border: 3px solid #28a745 !important;
+    background: #ffffff;
+  }
+  
+  .ganado-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(40, 167, 69, 0.3) !important;
+    border-color: #1e7e34 !important;
+  }
+  
+  .ganado-img {
+    transition: transform 0.3s ease;
+  }
+  
+  .ganado-card:hover .ganado-img {
+    transform: scale(1.05);
+  }
+  
+  .card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .badge-lg {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .bg-success-light {
+    background-color: #d4edda !important;
+  }
+  
+  .border-success {
+    border-color: #28a745 !important;
+  }
+</style>
+
 <section class="hero" style="background:url('<?php echo e(asset('img/bg-agrovida.jpg')); ?>') center/cover no-repeat; min-height:400px; position:relative;">
   <div class="container py-5 text-white" style="position:relative; z-index:2;">
     <h5 class="mb-2">Bienvenido a Agrovida</h5>
@@ -109,40 +149,74 @@
         <div class="row">
           <?php $__currentLoopData = $ganados; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ganado): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow-sm rounded-lg border-0">
-                <?php if($ganado->imagen): ?>
-                  <img src="<?php echo e(asset('storage/'.$ganado->imagen)); ?>" 
-                       class="card-img-top" 
-                       style="height:200px; object-fit:cover; cursor:pointer;"
-                       onclick="window.open('<?php echo e(asset('storage/'.$ganado->imagen)); ?>', '_blank')"
-                       alt="<?php echo e($ganado->nombre); ?>">
-                <?php else: ?>
-                  <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-image fa-3x text-muted"></i>
-                  </div>
-                <?php endif; ?>
-                <div class="card-body">
-                  <h5 class="card-title"><?php echo e($ganado->nombre); ?></h5>
-                  <p class="card-text text-muted small mb-2">
-                    <i class="fas fa-map-marker-alt"></i> <?php echo e($ganado->ubicacion ?? 'Sin ubicación'); ?>
+              <a href="<?php echo e(route('ganados.show', $ganado->id)); ?>" class="text-decoration-none" style="color: inherit;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                  <?php
+                    $imagenPrincipal = $ganado->imagenes->first()->ruta ?? $ganado->imagen ?? null;
+                  ?>
+                  <?php if($imagenPrincipal): ?>
+                    <div class="card-img-wrapper position-relative overflow-hidden">
+                      <img src="<?php echo e(asset('storage/'.$imagenPrincipal)); ?>" 
+                           class="card-img-top ganado-img" 
+                           style="height:220px; object-fit:cover; transition: transform 0.3s ease;"
+                           alt="<?php echo e($ganado->nombre); ?>">
+                      <div class="position-absolute top-0 right-0 m-2">
+                        <span class="badge badge-success badge-lg shadow-sm">
+                          <i class="fas fa-star"></i> Destacado
+                        </span>
+                      </div>
+                    </div>
+                  <?php else: ?>
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                      <i class="fas fa-image fa-4x text-muted"></i>
+                    </div>
+                  <?php endif; ?>
+                  <div class="card-body p-3">
+                    <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
+                      <i class="fas fa-tag text-success mr-1"></i><?php echo e($ganado->nombre); ?>
 
-                  </p>
-                  <div class="mb-2">
-                    <span class="badge badge-success"><?php echo e($ganado->categoria->nombre ?? 'Sin categoría'); ?></span>
-                    <?php if($ganado->tipoAnimal): ?>
-                      <span class="badge badge-info"><?php echo e($ganado->tipoAnimal->nombre); ?></span>
+                    </h5>
+                    <div class="mb-2">
+                      <p class="card-text text-muted small mb-1">
+                        <i class="fas fa-map-marker-alt text-success"></i> 
+                        <span class="ml-1"><?php echo e(Str::limit($ganado->ubicacion ?? 'Sin ubicación', 40)); ?></span>
+                      </p>
+                      <?php if($ganado->fecha_publicacion): ?>
+                        <p class="card-text text-muted small mb-1">
+                          <i class="fas fa-calendar-alt text-success"></i> 
+                          <span class="ml-1">Publicado: <?php echo e(\Carbon\Carbon::parse($ganado->fecha_publicacion)->format('d/m/Y')); ?></span>
+                        </p>
+                      <?php endif; ?>
+                    </div>
+                    <div class="mb-3">
+                      <span class="badge badge-success badge-lg px-3 py-2 mr-1 shadow-sm">
+                        <i class="fas fa-tags"></i> <?php echo e($ganado->categoria->nombre ?? 'Sin categoría'); ?>
+
+                      </span>
+                      <?php if($ganado->tipoAnimal): ?>
+                        <span class="badge badge-info badge-lg px-3 py-2 shadow-sm">
+                          <i class="fas fa-paw"></i> <?php echo e($ganado->tipoAnimal->nombre); ?>
+
+                        </span>
+                      <?php endif; ?>
+                    </div>
+                    <?php if($ganado->precio): ?>
+                      <div class="bg-success-light p-2 rounded mb-2 border-left border-success border-3">
+                        <small class="text-muted d-block mb-0">Precio</small>
+                        <h4 class="text-success font-weight-bold mb-0">
+                          <i class="fas fa-boliviano-sign"></i> <?php echo e(number_format($ganado->precio, 2)); ?>
+
+                        </h4>
+                      </div>
                     <?php endif; ?>
                   </div>
-                  <?php if($ganado->precio): ?>
-                    <p class="h5 text-success mb-0">Bs <?php echo e(number_format($ganado->precio, 2)); ?></p>
-                  <?php endif; ?>
+                  <div class="card-footer bg-white border-top border-success border-2 p-2">
+                    <div class="btn btn-success btn-block btn-lg shadow-sm font-weight-bold">
+                      <i class="fas fa-eye mr-2"></i> Ver Detalles
+                    </div>
+                  </div>
                 </div>
-                <div class="card-footer bg-white border-top">
-                  <a href="<?php echo e(route('ganados.show', $ganado->id)); ?>" class="btn btn-success btn-sm btn-block">
-                    <i class="fas fa-eye"></i> Ver Detalles
-                  </a>
-                </div>
-              </div>
+              </a>
             </div>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
@@ -326,52 +400,83 @@
         <div class="row">
           <?php $__currentLoopData = $ganados->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ganado): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow-sm rounded-lg border-0">
-                <?php if($ganado->imagen): ?>
-                  <img src="<?php echo e(asset('storage/'.$ganado->imagen)); ?>" 
-                       class="card-img-top" 
-                       style="height:200px; object-fit:cover; cursor:pointer;"
-                       onclick="window.open('<?php echo e(asset('storage/'.$ganado->imagen)); ?>', '_blank')"
-                       alt="<?php echo e($ganado->nombre); ?>">
-                <?php else: ?>
-                  <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-image fa-3x text-muted"></i>
-                  </div>
-                <?php endif; ?>
-                <div class="card-body">
-                  <h5 class="card-title"><?php echo e($ganado->nombre); ?></h5>
-                  <p class="card-text text-muted small mb-2">
-                    <i class="fas fa-map-marker-alt"></i> <?php echo e($ganado->ubicacion ?? 'Sin ubicación'); ?>
-
-                  </p>
-                  <div class="mb-2">
-                    <span class="badge badge-success"><?php echo e($ganado->categoria->nombre ?? 'Sin categoría'); ?></span>
-                  </div>
-                  <?php if($ganado->precio): ?>
-                    <p class="h5 text-success mb-0">Bs <?php echo e(number_format($ganado->precio, 2)); ?></p>
+              <a href="<?php echo e(route('ganados.show', $ganado->id)); ?>" class="text-decoration-none" style="color: inherit;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                  <?php
+                    $imagenPrincipal = $ganado->imagenes->first()->ruta ?? $ganado->imagen ?? null;
+                  ?>
+                  <?php if($imagenPrincipal): ?>
+                    <div class="card-img-wrapper position-relative overflow-hidden">
+                      <img src="<?php echo e(asset('storage/'.$imagenPrincipal)); ?>" 
+                           class="card-img-top ganado-img" 
+                           style="height:220px; object-fit:cover; transition: transform 0.3s ease;"
+                           alt="<?php echo e($ganado->nombre); ?>">
+                      <div class="position-absolute top-0 right-0 m-2">
+                        <span class="badge badge-success badge-lg shadow-sm">
+                          <i class="fas fa-star"></i> Destacado
+                        </span>
+                      </div>
+                    </div>
+                  <?php else: ?>
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                      <i class="fas fa-image fa-4x text-muted"></i>
+                    </div>
                   <?php endif; ?>
-                </div>
-                <div class="card-footer bg-white border-top">
-                  <div class="d-flex gap-2">
-                    <a href="<?php echo e(route('ganados.show', $ganado->id)); ?>" class="btn btn-outline-success btn-sm flex-fill">
-                      <i class="fas fa-eye"></i> Ver
-                    </a>
-                    <?php if(auth()->guard()->check()): ?>
-                      <?php if($ganado->precio && ($ganado->stock ?? 0) > 0): ?>
-                        <form action="<?php echo e(route('cart.add')); ?>" method="POST" class="d-inline">
-                          <?php echo csrf_field(); ?>
-                          <input type="hidden" name="product_type" value="ganado">
-                          <input type="hidden" name="product_id" value="<?php echo e($ganado->id); ?>">
-                          <input type="hidden" name="cantidad" value="1">
-                          <button type="submit" class="btn btn-success btn-sm" title="Agregar al carrito">
-                            <i class="fas fa-cart-plus"></i>
-                          </button>
-                        </form>
+                  <div class="card-body p-3">
+                    <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
+                      <i class="fas fa-tag text-success mr-1"></i><?php echo e($ganado->nombre); ?>
+
+                    </h5>
+                    <div class="mb-2">
+                      <p class="card-text text-muted small mb-1">
+                        <i class="fas fa-map-marker-alt text-success"></i> 
+                        <span class="ml-1"><?php echo e(Str::limit($ganado->ubicacion ?? 'Sin ubicación', 40)); ?></span>
+                      </p>
+                      <?php if($ganado->fecha_publicacion): ?>
+                        <p class="card-text text-muted small mb-1">
+                          <i class="fas fa-calendar-alt text-success"></i> 
+                          <span class="ml-1">Publicado: <?php echo e(\Carbon\Carbon::parse($ganado->fecha_publicacion)->format('d/m/Y')); ?></span>
+                        </p>
                       <?php endif; ?>
+                    </div>
+                    <div class="mb-3">
+                      <span class="badge badge-success badge-lg px-3 py-2 shadow-sm">
+                        <i class="fas fa-tags"></i> <?php echo e($ganado->categoria->nombre ?? 'Sin categoría'); ?>
+
+                      </span>
+                    </div>
+                    <?php if($ganado->precio): ?>
+                      <div class="bg-success-light p-2 rounded mb-2 border-left border-success border-3">
+                        <small class="text-muted d-block mb-0">Precio</small>
+                        <h4 class="text-success font-weight-bold mb-0">
+                          <i class="fas fa-boliviano-sign"></i> <?php echo e(number_format($ganado->precio, 2)); ?>
+
+                        </h4>
+                      </div>
                     <?php endif; ?>
                   </div>
+                  <div class="card-footer bg-white border-top border-success border-2 p-2">
+                    <div class="d-flex gap-2">
+                      <div class="btn btn-success btn-sm flex-fill shadow-sm font-weight-bold">
+                        <i class="fas fa-eye mr-1"></i> Ver
+                      </div>
+                      <?php if(auth()->guard()->check()): ?>
+                        <?php if($ganado->precio && ($ganado->stock ?? 0) > 0): ?>
+                          <form action="<?php echo e(route('cart.add')); ?>" method="POST" class="d-inline" onclick="event.stopPropagation();">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="product_type" value="ganado">
+                            <input type="hidden" name="product_id" value="<?php echo e($ganado->id); ?>">
+                            <input type="hidden" name="cantidad" value="1">
+                            <button type="submit" class="btn btn-success btn-sm shadow-sm" title="Agregar al carrito" onclick="event.stopPropagation();">
+                              <i class="fas fa-cart-plus"></i>
+                            </button>
+                          </form>
+                        <?php endif; ?>
+                      <?php endif; ?>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </a>
             </div>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>

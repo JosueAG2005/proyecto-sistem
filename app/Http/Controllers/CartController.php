@@ -17,7 +17,11 @@ class CartController extends Controller
     public function index()
     {
         $cartItems = CartItem::where('user_id', Auth::id())
-            ->with(['ganado', 'maquinaria', 'organico'])
+            ->with([
+                'ganado.imagenes',
+                'maquinaria.imagenes',
+                'organico.imagenes'
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
 

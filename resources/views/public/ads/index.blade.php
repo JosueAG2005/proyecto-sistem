@@ -2,6 +2,45 @@
 @section('title','Anuncios')
 
 @section('content')
+<style>
+  .ganado-card {
+    transition: all 0.3s ease;
+    border: 3px solid #28a745 !important;
+    background: #ffffff;
+  }
+  
+  .ganado-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(40, 167, 69, 0.3) !important;
+    border-color: #1e7e34 !important;
+  }
+  
+  .ganado-img {
+    transition: transform 0.3s ease;
+  }
+  
+  .ganado-card:hover .ganado-img {
+    transform: scale(1.05);
+  }
+  
+  .card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .badge-lg {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .bg-success-light {
+    background-color: #d4edda !important;
+  }
+  
+  .border-success {
+    border-color: #28a745 !important;
+  }
+</style>
 <section class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-success mb-0">
@@ -90,8 +129,11 @@
                 @foreach($misGanados as $ganado)
                   <div class="col-md-6 col-lg-4 mb-3">
                     <div class="card h-100 shadow-sm border-left-primary">
-                      @if($ganado->imagen)
-                        <img src="{{ asset('storage/'.$ganado->imagen) }}" 
+                      @php
+                        $imagenPrincipal = $ganado->imagenes->first()->ruta ?? $ganado->imagen ?? null;
+                      @endphp
+                      @if($imagenPrincipal)
+                        <img src="{{ asset('storage/'.$imagenPrincipal) }}" 
                              class="card-img-top" 
                              style="height:150px; object-fit:cover;"
                              alt="{{ $ganado->nombre }}">
@@ -105,6 +147,11 @@
                         <p class="card-text text-muted small mb-1">
                           <i class="fas fa-tag"></i> {{ $ganado->categoria->nombre ?? 'Sin categoría' }}
                         </p>
+                        @if($ganado->fecha_publicacion)
+                          <p class="card-text text-muted small mb-1">
+                            <i class="fas fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($ganado->fecha_publicacion)->format('d/m/Y') }}
+                          </p>
+                        @endif
                         @if($ganado->precio)
                           <p class="mb-1"><strong class="text-success">Bs {{ number_format($ganado->precio, 2) }}</strong></p>
                         @endif
@@ -234,46 +281,76 @@
         <div class="row">
           @foreach($ganados as $ganado)
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow-sm rounded-lg card-ad border-0">
-                @if($ganado->imagen)
-                  <img src="{{ asset('storage/'.$ganado->imagen) }}" 
-                       class="ad-img" 
-                       style="height:200px; object-fit:cover; cursor:pointer;"
-                       onclick="window.open('{{ asset('storage/'.$ganado->imagen) }}', '_blank')"
-                       alt="{{ $ganado->nombre }}">
-                @else
-                  <div class="ad-img bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-image fa-4x text-muted"></i>
-                  </div>
-                @endif
-                <div class="card-body">
-                  <h5 class="card-title mb-2">{{ $ganado->nombre }}</h5>
-                  <ul class="ad-meta list-unstyled mb-2">
-                    @if($ganado->ubicacion)
-                      <li><i class="fas fa-map-marker-alt text-muted"></i> {{ $ganado->ubicacion }}</li>
-                    @endif
-                    @if($ganado->tipoAnimal)
-                      <li><i class="fas fa-paw text-muted"></i> {{ $ganado->tipoAnimal->nombre }}</li>
-                    @endif
-                    @if($ganado->edad)
-                      <li><i class="fas fa-calendar text-muted"></i> {{ $ganado->edad }} meses</li>
-                    @endif
-                  </ul>
-                  <span class="badge badge-success badge-pill px-3">
-                    {{ $ganado->categoria->nombre ?? 'Animales' }}
-                  </span>
-                </div>
-                <div class="card-footer d-flex justify-content-between align-items-center bg-white border-top">
-                  @if($ganado->precio)
-                    <span class="price font-weight-bold text-success">Bs {{ number_format($ganado->precio, 2) }}</span>
+              <a href="{{ route('ganados.show', $ganado->id) }}" class="text-decoration-none" style="color: inherit;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                  @php
+                    $imagenPrincipal = $ganado->imagenes->first()->ruta ?? $ganado->imagen ?? null;
+                  @endphp
+                  @if($imagenPrincipal)
+                    <div class="card-img-wrapper position-relative overflow-hidden">
+                      <img src="{{ asset('storage/'.$imagenPrincipal) }}" 
+                           class="ad-img ganado-img" 
+                           style="height:220px; object-fit:cover; transition: transform 0.3s ease;"
+                           alt="{{ $ganado->nombre }}">
+                      <div class="position-absolute top-0 right-0 m-2">
+                        <span class="badge badge-success badge-lg shadow-sm">
+                          <i class="fas fa-star"></i> Destacado
+                        </span>
+                      </div>
+                    </div>
                   @else
-                    <span class="price font-weight-bold text-muted">Precio a consultar</span>
+                    <div class="ad-img bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                      <i class="fas fa-image fa-4x text-muted"></i>
+                    </div>
                   @endif
-                  <a href="{{ route('ganados.show', $ganado->id) }}" class="btn btn-success btn-sm px-3">
-                    Ver Anuncio <i class="fas fa-arrow-right"></i>
-                  </a>
+                  <div class="card-body p-3">
+                    <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
+                      <i class="fas fa-tag text-success mr-1"></i>{{ $ganado->nombre }}
+                    </h5>
+                    <ul class="ad-meta list-unstyled mb-2">
+                      @if($ganado->ubicacion)
+                        <li class="mb-1"><i class="fas fa-map-marker-alt text-success"></i> <span class="small">{{ Str::limit($ganado->ubicacion, 40) }}</span></li>
+                      @endif
+                      @if($ganado->tipoAnimal)
+                        <li class="mb-1"><i class="fas fa-paw text-success"></i> <span class="small">{{ $ganado->tipoAnimal->nombre }}</span></li>
+                      @endif
+                      @if($ganado->edad)
+                        <li class="mb-1"><i class="fas fa-birthday-cake text-success"></i> <span class="small">{{ $ganado->edad }} meses</span></li>
+                      @endif
+                      @if($ganado->fecha_publicacion)
+                        <li class="mb-1"><i class="fas fa-calendar-alt text-success"></i> <span class="small">Publicado: {{ \Carbon\Carbon::parse($ganado->fecha_publicacion)->format('d/m/Y') }}</span></li>
+                      @endif
+                    </ul>
+                    <div class="mb-2">
+                      <span class="badge badge-success badge-lg px-3 py-2 shadow-sm">
+                        <i class="fas fa-tags"></i> {{ $ganado->categoria->nombre ?? 'Animales' }}
+                      </span>
+                    </div>
+                    @if($ganado->precio)
+                      <div class="bg-success-light p-2 rounded mb-2 border-left border-success border-3">
+                        <small class="text-muted d-block mb-0">Precio</small>
+                        <h4 class="text-success font-weight-bold mb-0">
+                          <i class="fas fa-boliviano-sign"></i> {{ number_format($ganado->precio, 2) }}
+                        </h4>
+                      </div>
+                    @else
+                      <div class="bg-light p-2 rounded mb-2 border-left border-secondary border-3">
+                        <span class="text-muted small">Precio a consultar</span>
+                      </div>
+                    @endif
+                  </div>
+                  <div class="card-footer d-flex justify-content-between align-items-center bg-white border-top border-success border-2 p-2">
+                    @if($ganado->precio)
+                      <span class="price font-weight-bold text-success">Bs {{ number_format($ganado->precio, 2) }}</span>
+                    @else
+                      <span class="price font-weight-bold text-muted small">Consultar</span>
+                    @endif
+                    <div class="btn btn-success btn-sm px-3 shadow-sm font-weight-bold">
+                      Ver Anuncio <i class="fas fa-arrow-right ml-1"></i>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </a>
             </div>
           @endforeach
         </div>

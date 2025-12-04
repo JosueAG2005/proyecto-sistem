@@ -1,246 +1,392 @@
 <?php $__env->startSection('title', 'Editar Ganado'); ?>
 
 <?php $__env->startSection('content'); ?>
+<style>
+    .form-section-title {
+        color: #28a745;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #28a745;
+    }
+    .card-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    .form-group label {
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    .input-group .btn {
+        border-color: #28a745;
+    }
+    .input-group .btn:hover {
+        background-color: #28a745;
+        color: white;
+    }
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+    select.form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+</style>
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h3 mb-0">Editar Registro de Ganado</h1>
+        <h1 class="h3 mb-0 text-success">
+            <i class="fas fa-edit"></i> Editar Registro de Ganado
+        </h1>
         <a href="<?php echo e(url()->previous() !== url()->current() ? url()->previous() : route('ganados.index')); ?>" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-lg border-success border-3">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-cow"></i> Información del Animal</h5>
+        </div>
         <div class="card-body">
 
             <form action="<?php echo e(route('ganados.update', $ganado->id)); ?>" method="POST" enctype="multipart/form-data">
                 <?php echo csrf_field(); ?>
                 <?php echo method_field('PUT'); ?>
 
-                
-                <div class="form-group mb-3">
-                    <label>Nombre *</label>
-                    <input type="text" name="nombre" class="form-control" value="<?php echo e($ganado->nombre); ?>" required>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Tipo de Animal *</label>
-                    <select name="tipo_animal_id" id="tipo_animal_id" class="form-control" required>
-                        <?php $__currentLoopData = $tipo_animals; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($item->id); ?>" <?php echo e($ganado->tipo_animal_id == $item->id ? 'selected' : ''); ?>>
-                                <?php echo e($item->nombre); ?>
-
-                            </option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Raza</label>
-                    <select name="raza_id" id="raza_id" class="form-control">
-                        <?php $__currentLoopData = $razas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $raza): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($raza->id); ?>" <?php echo e($ganado->raza_id == $raza->id ? 'selected' : ''); ?>>
-                                <?php echo e($raza->nombre); ?>
-
-                            </option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Edad</label>
-                    <?php
-                        $anos = floor($ganado->edad / 12);
-                        $meses = $ganado->edad % 12;
-                    ?>
-
-                    <div class="d-flex" style="gap: 10px;">
-                        <select name="edad_anos" class="form-control" style="max-width: 150px;">
-                            <?php for($i=0;$i<=25;$i++): ?>
-                                <option value="<?php echo e($i); ?>" <?php echo e($i == $anos ? 'selected' : ''); ?>>
-                                    <?php echo e($i); ?> años
-                                </option>
-                            <?php endfor; ?>
-                        </select>
-
-                        <select name="edad_meses" class="form-control" style="max-width: 150px;">
-                            <?php for($i=0;$i<=11;$i++): ?>
-                                <option value="<?php echo e($i); ?>" <?php echo e($i == $meses ? 'selected' : ''); ?>>
-                                    <?php echo e($i); ?> meses
-                                </option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Método de Venta / Tipo de Peso</label>
-                    <select name="tipo_peso_id" class="form-control" required>
-                        <?php $__currentLoopData = $tipoPesos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $peso): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($peso->id); ?>" <?php echo e($ganado->tipo_peso_id == $peso->id ? 'selected' : ''); ?>>
-                                <?php echo e($peso->nombre); ?>
-
-                            </option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Sexo</label>
-                    <select name="sexo" class="form-control">
-                        <option value="">Seleccione</option>
-                        <option value="Macho" <?php echo e($ganado->sexo == 'Macho' ? 'selected' : ''); ?>>Macho</option>
-                        <option value="Hembra" <?php echo e($ganado->sexo == 'Hembra' ? 'selected' : ''); ?>>Hembra</option>
-                    </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Categoría *</label>
-                    <select name="categoria_id" class="form-control" required>
-                        <?php $__currentLoopData = $categorias; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($cat->id); ?>" <?php echo e($ganado->categoria_id == $cat->id ? 'selected' : ''); ?>>
-                                <?php echo e($cat->nombre); ?>
-
-                            </option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label for="dato_sanitario_id">Datos Sanitarios</label>
-                    <select name="dato_sanitario_id" class="form-control">
-                        <option value="">Sin registro sanitario</option>
-                        <?php $__currentLoopData = $datosSanitarios; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ds): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($ds->id); ?>" <?php echo e($ganado->dato_sanitario_id == $ds->id ? 'selected' : ''); ?>>
-                                <?php echo e($ds->vacuna ?? 'Sin vacuna'); ?> - <?php echo e($ds->fecha_aplicacion ?? 'Sin fecha'); ?>
-
-                            </option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </select>
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Fecha de Publicación</label>
-                    <input type="date" class="form-control" name="fecha_publicacion"
-                           value="<?php echo e($ganado->fecha_publicacion); ?>">
-                </div>
-
-                
-                <div class="form-group mb-3">
-                    <label>Ubicación</label>
-                    <input type="text" id="ubicacion" name="ubicacion" class="form-control"
-                           value="<?php echo e($ganado->ubicacion); ?>" readonly>
-
-                    <div id="map" style="height: 400px; margin-top:10px;"></div>
-
-                    <input type="hidden" name="latitud" id="latitud" value="<?php echo e($ganado->latitud); ?>">
-                    <input type="hidden" name="longitud" id="longitud" value="<?php echo e($ganado->longitud); ?>">
-                    <input type="hidden" name="departamento" id="departamento" value="<?php echo e($ganado->departamento); ?>">
-                    <input type="hidden" name="municipio" id="municipio" value="<?php echo e($ganado->municipio); ?>">
-                    <input type="hidden" name="provincia" id="provincia" value="<?php echo e($ganado->provincia); ?>">
-                    <input type="hidden" name="ciudad" id="ciudad" value="<?php echo e($ganado->ciudad); ?>">
-                    
-                    <div id="info-ubicacion" class="mt-3" style="display: <?php echo e(($ganado->ciudad || $ganado->municipio) ? 'block' : 'none'); ?>;">
-                        <div class="card border">
-                            <div class="card-body">
-                                <h6 class="mb-3"><strong>Ubicación</strong></h6>
-                                <div class="row mb-2">
-                                    <div class="col-md-3">
-                                        <strong>Ciudad:</strong>
-                                    </div>
-                                    <div class="col-md-9" id="ciudad-texto">
-                                        <?php echo e($ganado->ciudad ?? $ganado->municipio ?? '-'); ?>
-
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <strong>Dirección:</strong>
-                                    </div>
-                                    <div class="col-md-9" id="direccion-texto">
-                                        <?php
-                                            $direccion = [];
-                                            if($ganado->municipio) $direccion[] = $ganado->municipio;
-                                            if($ganado->provincia) $direccion[] = 'Provincia ' . $ganado->provincia;
-                                            if($ganado->departamento) $direccion[] = $ganado->departamento;
-                                            $direccion[] = 'Bolivia';
-                                            $direccionCompleta = implode(', ', $direccion);
-                                        ?>
-                                        <?php echo e($direccionCompleta); ?>
-
-                                    </div>
-                                </div>
-                            </div>
+                <div class="row">
+                    <!-- COLUMNA IZQUIERDA -->
+                    <div class="col-lg-6">
+                        <h6 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-info-circle"></i> Datos Básicos</h6>
+                        
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Nombre *</label>
+                            <input type="text" name="nombre" class="form-control" value="<?php echo e($ganado->nombre); ?>" required>
                         </div>
-                    </div>
-                </div>
 
-                
-                <div class="form-group mb-3">
-                    <label>Descripción</label>
-                    <textarea name="descripcion" class="form-control" rows="3"><?php echo e($ganado->descripcion); ?></textarea>
-                </div>
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Tipo de Animal *</label>
+                            <select name="tipo_animal_id" id="tipo_animal_id" class="form-control" required>
+                                <?php $__currentLoopData = $tipo_animals; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($item->id); ?>" <?php echo e($ganado->tipo_animal_id == $item->id ? 'selected' : ''); ?>>
+                                        <?php echo e($item->nombre); ?>
 
-                
-                <div class="form-group mb-3">
-                    <label>Precio (Bs)</label>
-                    <input type="number" name="precio" class="form-control" step="0.01"
-                           value="<?php echo e($ganado->precio); ?>">
-                </div>
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
 
-                
-                <div class="form-group mb-3">
-                    <label>Stock (Cantidad) *</label>
-                    <input type="number" name="stock" class="form-control" min="0"
-                           value="<?php echo e($ganado->stock ?? 0); ?>" required>
-                    <small class="form-text text-muted">Ingrese la cantidad disponible de ganado</small>
-                </div>
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Raza</label>
+                            <select name="raza_id" id="raza_id" class="form-control">
+                                <?php $__currentLoopData = $razas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $raza): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($raza->id); ?>" <?php echo e($ganado->raza_id == $raza->id ? 'selected' : ''); ?>>
+                                        <?php echo e($raza->nombre); ?>
 
-                
-                <div class="form-group mb-3">
-                    <label>Imágenes (máximo 3)</label>
-                    
-                    <?php if($ganado->imagenes && $ganado->imagenes->count() > 0): ?>
-                        <div class="mb-3">
-                            <p class="text-muted">Imágenes actuales:</p>
-                            <div class="row" id="imagenes-actuales">
-                                <?php $__currentLoopData = $ganado->imagenes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $imagen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <div class="col-md-4 mb-3 imagen-item" data-imagen-id="<?php echo e($imagen->id); ?>">
-                                        <div class="position-relative">
-                                            <img src="<?php echo e(asset('storage/'.$imagen->ruta)); ?>" 
-                                                 alt="Imagen <?php echo e($loop->iteration); ?>" 
-                                                 class="img-thumbnail" 
-                                                 style="width: 100%; height: 150px; object-fit: cover;">
-                                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 eliminar-imagen" 
-                                                    data-imagen-id="<?php echo e($imagen->id); ?>">
-                                                <i class="fas fa-times"></i>
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Edad</label>
+                            <?php
+                                $totalMeses = $ganado->edad ?? 0;
+                                $anos = floor($totalMeses / 12);
+                                $mesesRestantes = $totalMeses % 12;
+                                $dias = 0;
+                            ?>
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="small text-muted mb-1">Años</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decrementValue('edad_anos')">
+                                                <i class="fas fa-minus"></i>
                                             </button>
                                         </div>
-                                        <input type="hidden" name="imagenes_eliminar[]" value="" class="imagen-eliminar-input">
+                                        <input type="number" 
+                                               name="edad_anos" 
+                                               id="edad_anos" 
+                                               class="form-control text-center" 
+                                               value="<?php echo e(old('edad_anos', $anos)); ?>" 
+                                               min="0" 
+                                               max="25" 
+                                               required>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="incrementValue('edad_anos', 25)">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                                <div class="col-4">
+                                    <label class="small text-muted mb-1">Meses</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decrementValue('edad_meses')">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+                                        <input type="number" 
+                                               name="edad_meses" 
+                                               id="edad_meses" 
+                                               class="form-control text-center" 
+                                               value="<?php echo e(old('edad_meses', $mesesRestantes)); ?>" 
+                                               min="0" 
+                                               max="11" 
+                                               required>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="incrementValue('edad_meses', 11)">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <label class="small text-muted mb-1">Días</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decrementValue('edad_dias')">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+                                        <input type="number" 
+                                               name="edad_dias" 
+                                               id="edad_dias" 
+                                               class="form-control text-center" 
+                                               value="<?php echo e(old('edad_dias', 0)); ?>" 
+                                               min="0" 
+                                               max="30" 
+                                               required>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="incrementValue('edad_dias', 30)">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    <?php endif; ?>
-                    
-                    <div id="preview-container" class="row mb-3"></div>
-                    
-                    <input type="file" name="imagenes[]" class="form-control" accept="image/*" multiple id="imagenes-input">
-                    <small class="form-text text-muted">Puedes seleccionar hasta 3 imágenes. Formatos permitidos: JPG, PNG, GIF. Tamaño máximo por imagen: 2MB</small>
-                    <div id="imagenes-count" class="text-muted mt-2"></div>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Sexo</label>
+                            <select name="sexo" class="form-control">
+                                <option value="">Seleccione</option>
+                                <option value="Macho" <?php echo e($ganado->sexo == 'Macho' ? 'selected' : ''); ?>>Macho</option>
+                                <option value="Hembra" <?php echo e($ganado->sexo == 'Hembra' ? 'selected' : ''); ?>>Hembra</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Categoría *</label>
+                            <select name="categoria_id" class="form-control" required>
+                                <?php $__currentLoopData = $categorias; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($cat->id); ?>" <?php echo e($ganado->categoria_id == $cat->id ? 'selected' : ''); ?>>
+                                        <?php echo e($cat->nombre); ?>
+
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA -->
+                    <div class="col-lg-6">
+                        <h6 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-chart-line"></i> Información Comercial</h6>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Método de Venta / Tipo de Peso *</label>
+                            <select name="tipo_peso_id" class="form-control" required>
+                                <?php $__currentLoopData = $tipoPesos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $peso): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($peso->id); ?>" <?php echo e($ganado->tipo_peso_id == $peso->id ? 'selected' : ''); ?>>
+                                        <?php echo e($peso->nombre); ?>
+
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="peso_actual" class="font-weight-bold">Peso Actual (kg)</label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       name="peso_actual" 
+                                       id="peso_actual" 
+                                       class="form-control" 
+                                       step="0.01" 
+                                       min="0" 
+                                       value="<?php echo e(old('peso_actual', $ganado->peso_actual)); ?>"
+                                       placeholder="Ej: 250.50">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">kg</span>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Ingrese el peso actual del animal en kilogramos</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="precio" class="font-weight-bold">Precio (Bs)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Bs</span>
+                                </div>
+                                <input type="number" 
+                                       name="precio" 
+                                       id="precio" 
+                                       class="form-control" 
+                                       step="0.01" 
+                                       min="0" 
+                                       value="<?php echo e(old('precio', $ganado->precio)); ?>"
+                                       placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="stock" class="font-weight-bold">Stock (Cantidad) *</label>
+                            <input type="number" 
+                                   name="stock" 
+                                   id="stock" 
+                                   class="form-control" 
+                                   min="0" 
+                                   value="<?php echo e(old('stock', $ganado->stock)); ?>" 
+                                   required>
+                            <small class="form-text text-muted">Ingrese la cantidad disponible de ganado</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="dato_sanitario_id" class="font-weight-bold">Datos Sanitarios</label>
+                            <select name="dato_sanitario_id" class="form-control">
+                                <option value="">Sin registro sanitario</option>
+                                <?php $__currentLoopData = $datosSanitarios; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ds): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($ds->id); ?>" <?php echo e($ganado->dato_sanitario_id == $ds->id ? 'selected' : ''); ?>>
+                                        <?php echo e($ds->vacuna ?? 'Sin vacuna'); ?> - <?php echo e($ds->fecha_aplicacion ?? 'Sin fecha'); ?>
+
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Actualizar Registro
-                </button>
+                <!-- SECCIÓN DE DESCRIPCIÓN (ANCHO COMPLETO) -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-align-left"></i> Descripción</h6>
+                        <div class="form-group mb-3">
+                            <label for="descripcion" class="font-weight-bold">Descripción del Animal</label>
+                            <textarea name="descripcion" id="descripcion" class="form-control" rows="4" placeholder="Describa las características del animal..."><?php echo e(old('descripcion', $ganado->descripcion)); ?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE UBICACIÓN (ANCHO COMPLETO) -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-map-marker-alt"></i> Ubicación</h6>
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Seleccione la ubicación en el mapa</label>
+                            <input type="text" id="ubicacion" name="ubicacion" class="form-control mb-2"
+                                   value="<?php echo e($ganado->ubicacion); ?>" readonly placeholder="Ubicación seleccionada">
+
+                            <div id="map" style="height: 400px; border-radius: 10px; border: 2px solid #28a745;"></div>
+
+                            <input type="hidden" name="latitud" id="latitud" value="<?php echo e($ganado->latitud); ?>">
+                            <input type="hidden" name="longitud" id="longitud" value="<?php echo e($ganado->longitud); ?>">
+                            <input type="hidden" name="departamento" id="departamento" value="<?php echo e($ganado->departamento); ?>">
+                            <input type="hidden" name="municipio" id="municipio" value="<?php echo e($ganado->municipio); ?>">
+                            <input type="hidden" name="provincia" id="provincia" value="<?php echo e($ganado->provincia); ?>">
+                            <input type="hidden" name="ciudad" id="ciudad" value="<?php echo e($ganado->ciudad); ?>">
+                            
+                            <div id="info-ubicacion" class="mt-3" style="display: <?php echo e(($ganado->ciudad || $ganado->municipio) ? 'block' : 'none'); ?>;">
+                                <div class="card border-success">
+                                    <div class="card-body">
+                                        <h6 class="mb-3 text-success"><strong><i class="fas fa-info-circle"></i> Ubicación Seleccionada</strong></h6>
+                                        <div class="row mb-2">
+                                            <div class="col-md-3">
+                                                <strong>Ciudad:</strong>
+                                            </div>
+                                            <div class="col-md-9" id="ciudad-texto">
+                                                <?php echo e($ganado->ciudad ?? $ganado->municipio ?? '-'); ?>
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <strong>Dirección:</strong>
+                                            </div>
+                                            <div class="col-md-9" id="direccion-texto">
+                                                <?php
+                                                    $direccion = [];
+                                                    if($ganado->municipio) $direccion[] = $ganado->municipio;
+                                                    if($ganado->provincia) $direccion[] = 'Provincia ' . $ganado->provincia;
+                                                    if($ganado->departamento) $direccion[] = $ganado->departamento;
+                                                    $direccion[] = 'Bolivia';
+                                                    $direccionCompleta = implode(', ', $direccion);
+                                                ?>
+                                                <?php echo e($direccionCompleta); ?>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE IMÁGENES (ANCHO COMPLETO) -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-images"></i> Imágenes del Animal</h6>
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Imágenes (máximo 3)</label>
+                            
+                            <?php if($ganado->imagenes && $ganado->imagenes->count() > 0): ?>
+                                <div class="mb-3">
+                                    <p class="text-muted"><strong>Imágenes actuales:</strong></p>
+                                    <div class="row" id="imagenes-actuales">
+                                        <?php $__currentLoopData = $ganado->imagenes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $imagen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <div class="col-md-4 mb-3 imagen-item" data-imagen-id="<?php echo e($imagen->id); ?>">
+                                                <div class="position-relative">
+                                                    <img src="<?php echo e(asset('storage/'.$imagen->ruta)); ?>" 
+                                                         alt="Imagen <?php echo e($loop->iteration); ?>" 
+                                                         class="img-thumbnail" 
+                                                         style="width: 100%; height: 150px; object-fit: cover;">
+                                                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 eliminar-imagen" 
+                                                            data-imagen-id="<?php echo e($imagen->id); ?>">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="hidden" name="imagenes_eliminar[]" value="" class="imagen-eliminar-input">
+                                            </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <div id="preview-container" class="row mb-3"></div>
+                            
+                            <input type="file" name="imagenes[]" class="form-control" accept="image/*" multiple id="imagenes-input">
+                            <small class="form-text text-muted">Puedes seleccionar hasta 3 imágenes. Formatos permitidos: JPG, PNG, GIF. Tamaño máximo por imagen: 2MB</small>
+                            <div id="imagenes-count" class="text-muted mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTÓN DE ACTUALIZAR -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <a href="<?php echo e(route('ganados.index')); ?>" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                                <i class="fas fa-save"></i> Actualizar Registro
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
             </form>
 
@@ -426,6 +572,25 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+function incrementValue(fieldId, max) {
+    const field = document.getElementById(fieldId);
+    let value = parseInt(field.value) || 0;
+    if (value < max) {
+        value++;
+        field.value = value;
+    }
+}
+
+function decrementValue(fieldId) {
+    const field = document.getElementById(fieldId);
+    let value = parseInt(field.value) || 0;
+    if (value > 0) {
+        value--;
+        field.value = value;
+    }
+}
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.adminlte', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\Nicole\proyecto\Proyecto-Agricola\resources\views/ganados/edit.blade.php ENDPATH**/ ?>

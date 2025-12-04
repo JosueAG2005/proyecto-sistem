@@ -187,13 +187,16 @@
               <div class="animal-card">
 
                 {{-- Imagen --}}
+                @php
+                  $imagenPrincipal = $ganado->imagenes->first()->ruta ?? $ganado->imagen ?? null;
+                @endphp
                 <div class="animal-image-wrapper"
-                     @if($ganado->imagen)
-                       onclick="window.open('{{ asset('storage/'.$ganado->imagen) }}', '_blank')"
+                     @if($imagenPrincipal)
+                       onclick="window.open('{{ asset('storage/'.$imagenPrincipal) }}', '_blank')"
                        title="Click para ver imagen completa"
                      @endif>
-                  @if($ganado->imagen)
-                    <img src="{{ asset('storage/'.$ganado->imagen) }}"
+                  @if($imagenPrincipal)
+                    <img src="{{ asset('storage/'.$imagenPrincipal) }}"
                          alt="{{ $ganado->nombre }}"
                          class="animal-image">
                   @else

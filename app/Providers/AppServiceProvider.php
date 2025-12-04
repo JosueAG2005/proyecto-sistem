@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use App\Models\Categoria;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Compartir categorías con el layout adminlte para el sidebar
+        View::composer('layouts.adminlte', function ($view) {
+            $categorias = Categoria::orderBy('nombre')->get();
+            $view->with('categorias', $categorias);
+        });
     }
 }
