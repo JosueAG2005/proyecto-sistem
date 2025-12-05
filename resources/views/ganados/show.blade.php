@@ -5,34 +5,44 @@
 @section('content')
 <div class="container-fluid">
 
-    {{-- ESTILOS PARA OPTIMIZAR ESPACIOS --}}
+    {{-- ESTILOS OPTIMIZADOS Y PROFESIONALES --}}
     <style>
-        .panel-info-card {
-            height: auto;
+        .container-fluid {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .card {
+            margin-bottom: 0.75rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+        }
+        .card-header {
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .card-body .row {
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }
+        .card-body .row > [class*="col-"] {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
         }
         .badge-lg {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+            padding: 0.35rem 0.6rem;
         }
         .bg-success-light {
             background-color: #d4edda !important;
         }
-        .card {
-            margin-bottom: 0.75rem !important;
-        }
-        .compact-row {
-            margin-bottom: 0.5rem;
-        }
-        .compact-row:last-child {
-            margin-bottom: 0;
-        }
-        .section-divider {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #dee2e6;
-        }
         .info-item {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
         .info-item:last-child {
             margin-bottom: 0;
@@ -47,10 +57,48 @@
             align-items: center;
             gap: 0.5rem;
         }
+        .info-icon {
+            font-size: 1.5rem !important;
+            width: 40px;
+            text-align: center;
+        }
+        .info-row-item {
+            margin-bottom: 0.75rem;
+        }
+        .info-row-item:last-child {
+            margin-bottom: 0;
+        }
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .info-value {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .compact-spacing {
+            margin-bottom: 0.5rem !important;
+        }
+        .compact-spacing:last-child {
+            margin-bottom: 0 !important;
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 0.75rem;
+            }
+            .info-icon {
+                font-size: 1.25rem !important;
+                width: 35px;
+            }
+        }
     </style>
 
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h1 class="h4 mb-0 text-dark">
                 <i class="fas fa-cow text-success"></i> Detalle del Ganado
@@ -62,13 +110,14 @@
     </div>
 
     <div class="row">
-        <!-- Galería de Imágenes -->
-        <div class="col-lg-5 mb-3">
-            @if($ganado->imagenes && $ganado->imagenes->count() > 0)
-                <div class="card shadow-sm border-0 mb-2">
-                    <div class="card-body p-0">
+        <!-- Columna Izquierda: Galería y Contenido Principal -->
+        <div class="col-lg-8">
+            <!-- Galería de Imágenes -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body p-0">
+                    @if($ganado->imagenes && $ganado->imagenes->count() > 0)
                         <div class="position-relative bg-white d-flex justify-content-center align-items-center" 
-                             style="height: 320px; border-radius: 8px;">
+                             style="height: 400px; border-radius: 8px;">
                             <img id="imagen-principal" 
                                  src="{{ asset('storage/'.$ganado->imagenes->first()->ruta) }}" 
                                  alt="{{ $ganado->nombre }}" 
@@ -83,35 +132,32 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                @if($ganado->imagenes->count() > 1)
-                    <div class="row no-gutters">
-                        @foreach($ganado->imagenes as $imagen)
-                            <div class="col-4 pr-1">
-                                <div class="bg-white border rounded d-flex align-items-center justify-content-center" 
-                                     style="height: 65px; cursor: pointer; transition: all 0.2s;"
-                                     onclick="
-                                        document.getElementById('imagen-principal').src = '{{ asset('storage/'.$imagen->ruta) }}';
-                                        document.getElementById('imageModalImg').src = '{{ asset('storage/'.$imagen->ruta) }}';
-                                     "
-                                     onmouseover="this.style.borderColor='#28a745'; this.style.transform='scale(1.05)'" 
-                                     onmouseout="this.style.borderColor='#dee2e6'; this.style.transform='scale(1)'">
-                                    <img src="{{ asset('storage/'.$imagen->ruta) }}" 
-                                         alt="Imagen {{ $loop->iteration }}" 
-                                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                        
+                        @if($ganado->imagenes->count() > 1)
+                            <div class="p-2">
+                                <div class="row no-gutters">
+                                    @foreach($ganado->imagenes as $imagen)
+                                        <div class="col-3 pr-1">
+                                            <div class="bg-white border rounded d-flex align-items-center justify-content-center" 
+                                                 style="height: 80px; cursor: pointer; transition: all 0.2s;"
+                                                 onclick="
+                                                    document.getElementById('imagen-principal').src = '{{ asset('storage/'.$imagen->ruta) }}';
+                                                    document.getElementById('imageModalImg').src = '{{ asset('storage/'.$imagen->ruta) }}';
+                                                 "
+                                                 onmouseover="this.style.borderColor='#28a745'; this.style.transform='scale(1.05)'" 
+                                                 onmouseout="this.style.borderColor='#dee2e6'; this.style.transform='scale(1)'">
+                                                <img src="{{ asset('storage/'.$imagen->ruta) }}" 
+                                                     alt="Imagen {{ $loop->iteration }}" 
+                                                     style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                @endif
-            @elseif($ganado->imagen)
-                <!-- Compatibilidad con imagen antigua -->
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-0">
+                        @endif
+                    @elseif($ganado->imagen)
                         <div class="position-relative bg-white d-flex justify-content-center align-items-center" 
-                             style="height: 320px; border-radius: 8px;">
+                             style="height: 400px; border-radius: 8px;">
                             <img src="{{ asset('storage/'.$ganado->imagen) }}" 
                                  alt="Imagen de {{ $ganado->nombre }}" 
                                  style="max-height: 100%; max-width: 100%; object-fit: contain; cursor: pointer;"
@@ -123,428 +169,509 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            @else
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 320px;">
+                    @else
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 400px;">
                             <div class="text-center text-muted">
                                 <i class="fas fa-image fa-4x mb-3"></i>
                                 <p class="mb-0">Sin imágenes disponibles</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            @endif
-        </div>
-
-        <!-- Información Principal -->
-        <div class="col-lg-7">
-            <!-- Título y Precio -->
-            <div class="card shadow-sm border-0 mb-2 panel-info-card">
-                <div class="card-body p-2">
-                    <h2 class="h5 mb-1 text-dark">{{ $ganado->nombre }}</h2>
-                    
-                    <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
-                        <span class="badge badge-success badge-lg px-2 py-1">
-                            <i class="fas fa-tag"></i> {{ $ganado->categoria->nombre ?? 'Sin categoría' }}
-                        </span>
-                        @if($ganado->tipoAnimal)
-                            <span class="badge badge-info badge-lg px-2 py-1">
-                                <i class="fas fa-paw"></i> {{ $ganado->tipoAnimal->nombre }}
-                            </span>
-                        @endif
-                        @if($ganado->stock ?? 0 > 0)
-                            <span class="badge badge-primary badge-lg px-2 py-1">
-                                <i class="fas fa-box"></i> Stock: {{ $ganado->stock }}
-                            </span>
-                        @endif
-                    </div>
-
-                    @if($ganado->precio)
-                        <div class="bg-success-light p-2 rounded mb-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <small class="text-muted d-block mb-0">Precio</small>
-                                    <h3 class="h5 mb-0 text-success font-weight-bold">
-                                        Bs {{ number_format($ganado->precio, 2) }}
-                                    </h3>
-                                </div>
-                                <div class="text-right">
-                                    <i class="fas fa-money-bill-wave fa-lg text-success opacity-50"></i>
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        <div class="alert alert-info mb-2 py-1 px-2">
-                            <i class="fas fa-info-circle"></i> <small>Precio a consultar</small>
-                        </div>
                     @endif
-
-                    @auth
-                        @if($ganado->precio && ($ganado->stock ?? 0) > 0)
-                            <div class="border-top pt-2 mt-2">
-                                <form action="{{ route('cart.add') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="product_type" value="ganado">
-                                    <input type="hidden" name="product_id" value="{{ $ganado->id }}">
-                                    <div class="form-row align-items-end">
-                                        <div class="col-auto">
-                                            <label class="small font-weight-bold text-muted mb-0 d-block">Cantidad</label>
-                                            <input type="number" 
-                                                   name="cantidad" 
-                                                   class="form-control form-control-sm" 
-                                                   value="1" 
-                                                   min="1" 
-                                                   max="{{ $ganado->stock ?? 1 }}" 
-                                                   required
-                                                   style="width: 80px;">
-                                        </div>
-                                        <div class="col">
-                                            <button type="submit" class="btn btn-success btn-sm btn-block">
-                                                <i class="fas fa-cart-plus"></i> Agregar al Carrito
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        @endif
-                    @endauth
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Información Detallada -->
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0 mb-2">
-                <div class="card-header bg-white border-bottom py-1 px-2">
-                    <h5 class="mb-0 h6">
-                        <i class="fas fa-info-circle text-primary"></i> Información Detallada
+            <!-- Información Básica -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cow"></i> Información Básica
                     </h5>
                 </div>
-                <div class="card-body p-2">
+                <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6 mb-1 info-item">
+                        <div class="col-md-6 info-row-item">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-dna text-primary opacity-50 mr-2" style="width: 20px;"></i>
+                                <i class="fas fa-dna text-primary info-icon"></i>
                                 <div class="flex-grow-1">
-                                    <small class="text-muted d-block mb-0">Raza</small>
-                                    <strong class="d-block small">{{ $ganado->raza->nombre ?? 'No especificada' }}</strong>
+                                    <small class="text-muted d-block mb-0 section-title">Raza</small>
+                                    <strong class="d-block info-value">{{ $ganado->raza->nombre ?? 'No especificada' }}</strong>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-1 info-item">
+                        <div class="col-md-6 info-row-item">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-birthday-cake text-warning opacity-50 mr-2" style="width: 20px;"></i>
+                                <i class="fas fa-birthday-cake text-warning info-icon"></i>
                                 <div class="flex-grow-1">
-                                    <small class="text-muted d-block mb-0">Edad</small>
-                                    <strong class="d-block small">{{ $ganado->edad ?? '—' }} meses</strong>
+                                    <small class="text-muted d-block mb-0 section-title">Edad</small>
+                                    <strong class="d-block info-value">{{ $ganado->edad ?? '—' }} meses</strong>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-1 info-item">
+                        <div class="col-md-6 info-row-item">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-weight text-info opacity-50 mr-2" style="width: 20px;"></i>
+                                <i class="fas fa-weight text-info info-icon"></i>
                                 <div class="flex-grow-1">
-                                    <small class="text-muted d-block mb-0">Tipo de Peso</small>
-                                    <strong class="d-block small">{{ $ganado->tipoPeso->nombre ?? '—' }}</strong>
+                                    <small class="text-muted d-block mb-0 section-title">Tipo de Peso</small>
+                                    <strong class="d-block info-value">{{ $ganado->tipoPeso->nombre ?? '—' }}</strong>
                                 </div>
                             </div>
                         </div>
                         @if($ganado->peso_actual)
-                        <div class="col-md-6 mb-1 info-item">
+                        <div class="col-md-6 info-row-item">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-weight-hanging text-success opacity-50 mr-2" style="width: 20px;"></i>
+                                <i class="fas fa-weight-hanging text-success info-icon"></i>
                                 <div class="flex-grow-1">
-                                    <small class="text-muted d-block mb-0">Peso Actual</small>
-                                    <strong class="d-block small">{{ number_format($ganado->peso_actual, 2) }} kg</strong>
+                                    <small class="text-muted d-block mb-0 section-title">Peso Actual</small>
+                                    <strong class="d-block info-value">{{ number_format($ganado->peso_actual, 2) }} KG</strong>
                                 </div>
                             </div>
                         </div>
                         @endif
-                        <div class="col-md-6 mb-1 info-item">
+                        <div class="col-md-6 info-row-item">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-venus-mars text-danger opacity-50 mr-2" style="width: 20px;"></i>
+                                <i class="fas fa-paw text-info info-icon"></i>
                                 <div class="flex-grow-1">
-                                    <small class="text-muted d-block mb-0">Sexo</small>
-                                    <strong class="d-block small">{{ $ganado->sexo ?? '—' }}</strong>
+                                    <small class="text-muted d-block mb-0 section-title">Tipo de Animal</small>
+                                    <strong class="d-block info-value">{{ $ganado->tipoAnimal->nombre ?? '—' }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 info-row-item">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-venus-mars text-danger info-icon"></i>
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block mb-0 section-title">Sexo</small>
+                                    <strong class="d-block info-value">{{ $ganado->sexo ?? '—' }}</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     @if($ganado->descripcion)
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-1 small font-weight-bold">
+                        <div class="mt-2 pt-2 border-top">
+                            <small class="text-muted d-block mb-1 section-title">
                                 <i class="fas fa-align-left"></i> Descripción
-                            </h6>
-                            <p class="mb-0 text-dark small">{{ $ganado->descripcion }}</p>
+                            </small>
+                            <p class="mb-0 info-value">{{ $ganado->descripcion }}</p>
                         </div>
-                    @endif
-
-                    @if($ganado->datoSanitario)
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-1 small font-weight-bold">
-                                <i class="fas fa-syringe text-success"></i> Datos Sanitarios
-                            </h6>
-                            <div class="row">
-                                @if($ganado->datoSanitario->vacunado_fiebre_aftosa || $ganado->datoSanitario->vacunado_antirabica)
-                                    <div class="col-12 mb-1">
-                                        <small class="text-muted d-block mb-1">Vacunaciones Específicas</small>
-                                        @if($ganado->datoSanitario->vacunado_fiebre_aftosa)
-                                            <span class="badge badge-success badge-sm mr-1 mb-1">
-                                                <i class="fas fa-check-circle"></i> Vacunado de Libre de Fiebre Aftosa
-                                            </span>
-                                        @endif
-                                        @if($ganado->datoSanitario->vacunado_antirabica)
-                                            <span class="badge badge-success badge-sm mr-1 mb-1">
-                                                <i class="fas fa-check-circle"></i> Vacunado de Antirrábica
-                                            </span>
-                                        @endif
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->vacuna)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Otras Vacunas</small>
-                                        <strong class="small">{{ $ganado->datoSanitario->vacuna }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->tratamiento)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Tratamiento</small>
-                                        <strong class="small">{{ $ganado->datoSanitario->tratamiento }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->medicamento)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Medicamento</small>
-                                        <strong class="small">{{ $ganado->datoSanitario->medicamento }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->fecha_aplicacion)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Fecha de Aplicación</small>
-                                        <strong class="small">{{ \Carbon\Carbon::parse($ganado->datoSanitario->fecha_aplicacion)->format('d/m/Y') }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->proxima_fecha)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Próxima Fecha</small>
-                                        <strong class="small">{{ \Carbon\Carbon::parse($ganado->datoSanitario->proxima_fecha)->format('d/m/Y') }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->veterinario)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Veterinario</small>
-                                        <strong class="small">{{ $ganado->datoSanitario->veterinario }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->observaciones)
-                                    <div class="col-12 mb-1">
-                                        <small class="text-muted d-block">Observaciones</small>
-                                        <p class="mb-0 small">{{ $ganado->datoSanitario->observaciones }}</p>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->certificado_imagen)
-                                    <div class="col-12 mb-1">
-                                        <small class="text-muted d-block mb-1">Certificado de Vacunación SENASAG</small>
-                                        <div class="btn-inline-img">
-                                            <a href="{{ asset('storage/'.$ganado->datoSanitario->certificado_imagen) }}" 
-                                               target="_blank" 
-                                               class="btn btn-info btn-sm">
-                                                <i class="fas fa-file-image"></i> Ver Certificado
-                                            </a>
-                                            <img src="{{ asset('storage/'.$ganado->datoSanitario->certificado_imagen) }}" 
-                                                 alt="Certificado SENASAG" 
-                                                 class="img-thumbnail img-preview-inline" 
-                                                 style="max-width: 120px; max-height: 80px; cursor: pointer; object-fit: cover;"
-                                                 onclick="window.open('{{ asset('storage/'.$ganado->datoSanitario->certificado_imagen) }}', '_blank')"
-                                                 title="Click para ver imagen completa">
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        @if($ganado->datoSanitario->marca_ganado || $ganado->datoSanitario->senal_numero || $ganado->datoSanitario->marca_ganado_foto)
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-1 small font-weight-bold">
-                                <i class="fas fa-tag text-primary"></i> Marca del Animal
-                            </h6>
-                            <div class="row">
-                                @if($ganado->datoSanitario->marca_ganado)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Marca del Ganado</small>
-                                        <strong class="small">{{ $ganado->datoSanitario->marca_ganado }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->senal_numero)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Señal o #</small>
-                                        <strong class="small">{{ $ganado->datoSanitario->senal_numero }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->marca_ganado_foto)
-                                    <div class="col-12 mb-1">
-                                        <small class="text-muted d-block mb-1">Foto de la Marca</small>
-                                        <div class="btn-inline-img">
-                                            <a href="{{ asset('storage/'.$ganado->datoSanitario->marca_ganado_foto) }}" 
-                                               target="_blank" 
-                                               class="btn btn-primary btn-sm">
-                                                <i class="fas fa-image"></i> Ver Foto Marca
-                                            </a>
-                                            <img src="{{ asset('storage/'.$ganado->datoSanitario->marca_ganado_foto) }}" 
-                                                 alt="Foto de la Marca" 
-                                                 class="img-thumbnail img-preview-inline" 
-                                                 style="max-width: 120px; max-height: 80px; cursor: pointer; object-fit: cover;"
-                                                 onclick="window.open('{{ asset('storage/'.$ganado->datoSanitario->marca_ganado_foto) }}', '_blank')"
-                                                 title="Click para ver imagen completa">
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        @endif
-
-                        @if($ganado->datoSanitario->nombre_dueño || $ganado->datoSanitario->carnet_dueño_foto)
-                        <div class="section-divider">
-                            <h6 class="text-muted mb-1 small font-weight-bold">
-                                <i class="fas fa-user text-info"></i> Información del Dueño
-                            </h6>
-                            <div class="row">
-                                @if($ganado->datoSanitario->nombre_dueño)
-                                    <div class="col-md-6 mb-1">
-                                        <small class="text-muted d-block">Nombre del Dueño</small>
-                                        <strong class="small">{{ $ganado->datoSanitario->nombre_dueño }}</strong>
-                                    </div>
-                                @endif
-                                @if($ganado->datoSanitario->carnet_dueño_foto)
-                                    <div class="col-12 mb-1">
-                                        <small class="text-muted d-block mb-1">Carnet del Dueño</small>
-                                        <div class="btn-inline-img">
-                                            <a href="{{ asset('storage/'.$ganado->datoSanitario->carnet_dueño_foto) }}" 
-                                               target="_blank" 
-                                               class="btn btn-info btn-sm">
-                                                <i class="fas fa-id-card"></i> Ver Carnet
-                                            </a>
-                                            <img src="{{ asset('storage/'.$ganado->datoSanitario->carnet_dueño_foto) }}" 
-                                                 alt="Carnet Dueño" 
-                                                 class="img-thumbnail img-preview-inline" 
-                                                 style="max-width: 120px; max-height: 80px; cursor: pointer; object-fit: cover;"
-                                                 onclick="window.open('{{ asset('storage/'.$ganado->datoSanitario->carnet_dueño_foto) }}', '_blank')"
-                                                 title="Click para ver imagen completa">
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        @endif
                     @endif
                 </div>
             </div>
+
+            <!-- Datos Sanitarios -->
+            @if($ganado->datoSanitario)
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-syringe"></i> Datos Sanitarios
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @if($ganado->datoSanitario->vacuna)
+                            <div class="col-md-6 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-vial text-success info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Otras Vacunas</small>
+                                        <strong class="d-block info-value">{{ $ganado->datoSanitario->vacuna }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->vacunado_fiebre_aftosa || $ganado->datoSanitario->vacunado_antirabica)
+                            <div class="col-12 info-row-item">
+                                <small class="text-muted d-block mb-1 section-title">Vacunaciones Específicas</small>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @if($ganado->datoSanitario->vacunado_fiebre_aftosa)
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-shield-alt"></i> Fiebre Aftosa
+                                        </span>
+                                    @endif
+                                    @if($ganado->datoSanitario->vacunado_antirabica)
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-shield-alt"></i> Antirrábica
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->tratamiento)
+                            <div class="col-md-6 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-stethoscope text-info info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Tratamiento</small>
+                                        <strong class="d-block info-value">{{ $ganado->datoSanitario->tratamiento }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->medicamento)
+                            <div class="col-md-6 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-capsules text-info info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Medicamento</small>
+                                        <strong class="d-block info-value">{{ $ganado->datoSanitario->medicamento }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->fecha_aplicacion)
+                            <div class="col-md-6 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar-check text-info info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Fecha de Aplicación</small>
+                                        <strong class="d-block info-value">{{ \Carbon\Carbon::parse($ganado->datoSanitario->fecha_aplicacion)->format('d/m/Y') }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->proxima_fecha)
+                            <div class="col-md-6 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar-alt text-warning info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Próxima Fecha</small>
+                                        <strong class="d-block info-value">{{ \Carbon\Carbon::parse($ganado->datoSanitario->proxima_fecha)->format('d/m/Y') }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->veterinario)
+                            <div class="col-md-6 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-md text-primary info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Veterinario</small>
+                                        <strong class="d-block info-value">{{ $ganado->datoSanitario->veterinario }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->observaciones)
+                            <div class="col-12 info-row-item">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-comment-alt text-info info-icon mt-1"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-1 section-title">Observaciones</small>
+                                        <p class="mb-0 info-value">{{ $ganado->datoSanitario->observaciones }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Certificado de Vacunación SENASAG -->
+            @if($ganado->datoSanitario && $ganado->datoSanitario->certificado_imagen)
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-medical"></i> Certificado de Vacunación SENASAG
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-inline-img">
+                        <a href="{{ asset('storage/'.$ganado->datoSanitario->certificado_imagen) }}" 
+                           target="_blank" 
+                           class="btn btn-success btn-sm">
+                            <i class="fas fa-file-image"></i> Ver Certificado
+                        </a>
+                        <img src="{{ asset('storage/'.$ganado->datoSanitario->certificado_imagen) }}" 
+                             alt="Certificado SENASAG" 
+                             class="img-thumbnail img-preview-inline" 
+                             style="max-width: 120px; max-height: 80px; cursor: pointer; object-fit: cover;"
+                             onclick="window.open('{{ asset('storage/'.$ganado->datoSanitario->certificado_imagen) }}', '_blank')"
+                             title="Click para ver imagen completa">
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Certificado de Campeón -->
+            @if($ganado->datoSanitario && $ganado->datoSanitario->certificado_campeon_imagen)
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy"></i> Certificado de Campeón
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-inline-img">
+                        <a href="{{ asset('storage/'.$ganado->datoSanitario->certificado_campeon_imagen) }}" 
+                           target="_blank" 
+                           class="btn btn-success btn-sm">
+                            <i class="fas fa-trophy"></i> Ver Certificado Campeón
+                        </a>
+                        <img src="{{ asset('storage/'.$ganado->datoSanitario->certificado_campeon_imagen) }}" 
+                             alt="Certificado Campeón" 
+                             class="img-thumbnail img-preview-inline" 
+                             style="max-width: 120px; max-height: 80px; cursor: pointer; object-fit: cover;"
+                             onclick="window.open('{{ asset('storage/'.$ganado->datoSanitario->certificado_campeon_imagen) }}', '_blank')"
+                             title="Click para ver imagen completa">
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Logros y Reconocimientos --}}
+            @php
+                $tieneLogros = false;
+                $logrosBelleza = [];
+                $logrosLeche = [];
+                $logrosCarne = [];
+                $logrosReproduccion = [];
+                
+                if($ganado->datoSanitario) {
+                    if($ganado->datoSanitario->logro_campeon_raza) {
+                        $logrosBelleza[] = 'Campeón de Raza';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_gran_campeon_macho) {
+                        $logrosBelleza[] = 'Gran Campeón Macho';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_gran_campeon_hembra) {
+                        $logrosBelleza[] = 'Gran Campeón Hembra';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_mejor_ubre) {
+                        $logrosBelleza[] = 'Mejor Ubre';
+                        $tieneLogros = true;
+                    }
+                    
+                    if($ganado->datoSanitario->logro_campeona_litros_dia) {
+                        $logrosLeche[] = 'Campeona Litros/Día';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_mejor_lactancia) {
+                        $logrosLeche[] = 'Mejor Lactancia';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_mejor_calidad_leche) {
+                        $logrosLeche[] = 'Mejor Calidad de Leche';
+                        $tieneLogros = true;
+                    }
+                    
+                    if($ganado->datoSanitario->logro_mejor_novillo) {
+                        $logrosCarne[] = 'Mejor Novillo';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_gran_campeon_carne) {
+                        $logrosCarne[] = 'Gran Campeón de Carne';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_mejor_semental) {
+                        $logrosCarne[] = 'Mejor Semental';
+                        $tieneLogros = true;
+                    }
+                    
+                    if($ganado->datoSanitario->logro_mejor_madre) {
+                        $logrosReproduccion[] = 'Mejor Madre';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_mejor_padre) {
+                        $logrosReproduccion[] = 'Mejor Padre';
+                        $tieneLogros = true;
+                    }
+                    if($ganado->datoSanitario->logro_mejor_fertilidad) {
+                        $logrosReproduccion[] = 'Mejor Fertilidad';
+                        $tieneLogros = true;
+                    }
+                }
+            @endphp
+            
+            @if($tieneLogros)
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy"></i> Logros y Reconocimientos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @if(count($logrosBelleza) > 0)
+                            <div class="col-md-6 info-row-item">
+                                <small class="text-muted d-block mb-1 section-title">
+                                    <i class="fas fa-star text-warning"></i> Belleza y Ganadería
+                                </small>
+                                @foreach($logrosBelleza as $logro)
+                                    <div class="mb-1">
+                                        <i class="fas fa-trophy text-warning"></i> 
+                                        <span class="info-value">{{ $logro }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                        @if(count($logrosLeche) > 0)
+                            <div class="col-md-6 info-row-item">
+                                <small class="text-muted d-block mb-1 section-title">
+                                    <i class="fas fa-tint text-info"></i> Producción de Leche
+                                </small>
+                                @foreach($logrosLeche as $logro)
+                                    <div class="mb-1">
+                                        <i class="fas fa-trophy text-warning"></i> 
+                                        <span class="info-value">{{ $logro }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                        @if(count($logrosCarne) > 0)
+                            <div class="col-md-6 info-row-item">
+                                <small class="text-muted d-block mb-1 section-title">
+                                    <i class="fas fa-drumstick-bite text-danger"></i> Producción de Carne
+                                </small>
+                                @foreach($logrosCarne as $logro)
+                                    <div class="mb-1">
+                                        <i class="fas fa-trophy text-warning"></i> 
+                                        <span class="info-value">{{ $logro }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                        @if(count($logrosReproduccion) > 0)
+                            <div class="col-md-6 info-row-item">
+                                <small class="text-muted d-block mb-1 section-title">
+                                    <i class="fas fa-heart text-danger"></i> Reproducción
+                                </small>
+                                @foreach($logrosReproduccion as $logro)
+                                    <div class="mb-1">
+                                        <i class="fas fa-trophy text-warning"></i> 
+                                        <span class="info-value">{{ $logro }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Árbol Genealógico --}}
+            @if($ganado->datoSanitario && $ganado->datoSanitario->arbol_genealogico)
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-sitemap"></i> Árbol Genealógico
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ asset('storage/'.$ganado->datoSanitario->arbol_genealogico) }}" 
+                       target="_blank" 
+                       class="btn btn-success btn-sm">
+                        <i class="fas fa-sitemap"></i> Ver Árbol Genealógico
+                    </a>
+                </div>
+            </div>
+            @endif
         </div>
 
+        <!-- Columna Derecha: Panel de Precio/Carrito, Fechas, Vendedor -->
         <div class="col-lg-4">
-            <!-- Ubicación y Fechas -->
-            <div class="card shadow-sm border-0 mb-2">
-                <div class="card-header bg-white border-bottom py-1 px-2">
-                    <h5 class="mb-0 h6">
-                        <i class="fas fa-map-marker-alt text-danger"></i> Ubicación
-                    </h5>
-                </div>
-                <div class="card-body p-2">
-                    @if($ganado->ciudad || $ganado->municipio || $ganado->departamento)
-                        <div class="mb-2">
-                            <div class="row mb-1">
-                                <div class="col-4">
-                                    <strong class="small">Ciudad:</strong>
-                                </div>
-                                <div class="col-8">
-                                    <span class="small">{{ $ganado->ciudad ?? $ganado->municipio ?? 'No disponible' }}</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-4">
-                                    <strong class="small">Dirección:</strong>
-                                </div>
-                                <div class="col-8">
-                                    @php
-                                        $direccion = [];
-                                        if($ganado->municipio) $direccion[] = $ganado->municipio;
-                                        if($ganado->provincia) $direccion[] = 'Provincia ' . $ganado->provincia;
-                                        if($ganado->departamento) $direccion[] = $ganado->departamento;
-                                        $direccion[] = 'Bolivia';
-                                        $direccionCompleta = implode(', ', $direccion);
-                                    @endphp
-                                    <span class="small">{{ $direccionCompleta }}</span>
-                                </div>
-                            </div>
+            <!-- Panel de Precio y Carrito -->
+            <div class="card shadow-sm border-0 mb-3 border-left border-success" style="border-left-width: 4px !important;">
+                <div class="card-body p-3">
+                    <h2 class="h5 mb-2 text-dark">{{ $ganado->nombre }}</h2>
+                    
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <span class="badge badge-success badge-lg">
+                            <i class="fas fa-tag"></i> {{ $ganado->categoria->nombre ?? 'Sin categoría' }}
+                        </span>
+                        @if($ganado->tipoAnimal)
+                            <span class="badge badge-info badge-lg">
+                                <i class="fas fa-paw"></i> {{ $ganado->tipoAnimal->nombre }}
+                            </span>
+                        @endif
+                        @if($ganado->stock ?? 0 > 0)
+                            <span class="badge badge-primary badge-lg">
+                                <i class="fas fa-box"></i> Stock: {{ $ganado->stock }}
+                            </span>
+                        @endif
+                    </div>
+
+                    @if($ganado->precio)
+                        <div class="bg-success-light p-2 rounded mb-2 border-left border-success" style="border-left-width: 4px !important;">
+                            <small class="text-muted d-block mb-0">Precio</small>
+                            <h3 class="h5 mb-0 text-success font-weight-bold">
+                                Bs {{ number_format($ganado->precio, 2) }}
+                            </h3>
                         </div>
-                    @elseif($ganado->ubicacion)
-                        <p class="mb-2 small">
-                            <i class="fas fa-location-dot text-danger"></i> 
-                            <strong>{{ $ganado->ubicacion }}</strong>
-                        </p>
                     @else
-                        <p class="text-muted mb-2 small">Sin ubicación especificada</p>
+                        <div class="alert alert-info mb-2 py-2">
+                            <i class="fas fa-info-circle"></i> <small>Precio a consultar</small>
+                        </div>
                     @endif
-                    @if($ganado->latitud && $ganado->longitud)
-                        <button type="button" class="btn btn-danger btn-sm btn-block" data-toggle="modal" data-target="#mapModal">
-                            <i class="fas fa-map"></i> Ver Mapa
-                        </button>
-                    @endif
+
+                    @auth
+                        @if($ganado->precio && ($ganado->stock ?? 0) > 0)
+                            <form action="{{ route('cart.add') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="product_type" value="ganado">
+                                <input type="hidden" name="product_id" value="{{ $ganado->id }}">
+                                <div class="mb-2">
+                                    <label class="small font-weight-bold text-muted mb-1 d-block">Cantidad</label>
+                                    <input type="number" 
+                                           name="cantidad" 
+                                           class="form-control form-control-sm" 
+                                           value="1" 
+                                           min="1" 
+                                           max="{{ $ganado->stock ?? 1 }}" 
+                                           required
+                                           style="width: 100px;">
+                                </div>
+                                <button type="submit" class="btn btn-success btn-block shadow-sm">
+                                    <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                                </button>
+                            </form>
+                        @endif
+                    @endauth
                 </div>
             </div>
 
-            <!-- Información Adicional -->
-            <div class="card shadow-sm border-0 mb-2">
-                <div class="card-header bg-white border-bottom py-1 px-2">
-                    <h5 class="mb-0 h6">
-                        <i class="fas fa-calendar-alt text-info"></i> Fechas
+            <!-- Fechas -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt"></i> Fechas
                     </h5>
                 </div>
-                <div class="card-body p-2">
+                <div class="card-body">
                     @if($ganado->fecha_publicacion)
                         <div>
-                            <small class="text-muted d-block mb-0">Fecha de Publicación</small>
-                            <strong class="small">{{ \Carbon\Carbon::parse($ganado->fecha_publicacion)->format('d/m/Y') }}</strong>
+                            <small class="text-muted d-block mb-0 section-title">Fecha de Publicación</small>
+                            <strong class="info-value">{{ \Carbon\Carbon::parse($ganado->fecha_publicacion)->format('d/m/Y') }}</strong>
                         </div>
                     @else
-                        <p class="text-muted mb-0 small">Sin fecha de publicación</p>
+                        <p class="text-muted mb-0 info-value">Sin fecha de publicación</p>
                     @endif
                 </div>
             </div>
 
             <!-- Información del Vendedor -->
             @if($ganado->user)
-            <div class="card shadow-sm border-0 border-success border-3">
-                <div class="card-header bg-success text-white py-2 px-2">
-                    <h5 class="mb-0 h6 font-weight-bold">
+            <div class="card shadow-sm border-0 border-success" style="border-width: 3px !important;">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0 font-weight-bold">
                         <i class="fas fa-user"></i> Información del Vendedor
                     </h5>
                 </div>
-                <div class="card-body p-3">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="mr-3">
-                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                <i class="fas fa-user fa-2x text-white"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-0 font-weight-bold text-dark">{{ $ganado->user->name }}</h6>
-                            <small class="text-muted d-block">
-                                <i class="fas fa-envelope text-success"></i> {{ $ganado->user->email }}
-                            </small>
-                        </div>
+                <div class="card-body">
+                    <div class="info-row-item">
+                        <h6 class="mb-1 font-weight-bold text-dark">{{ $ganado->user->name }}</h6>
+                        <small class="text-muted d-block info-value">
+                            <i class="fas fa-envelope text-success"></i> {{ $ganado->user->email }}
+                        </small>
                     </div>
                     
                     <div class="border-top pt-2">
                         @if($ganado->user->role)
-                            <div class="mb-2">
-                                <small class="text-muted d-block mb-1">Tipo de Usuario</small>
+                            <div class="info-row-item">
+                                <small class="text-muted d-block mb-1 section-title">Tipo de Usuario</small>
                                 @php
                                     $roleName = $ganado->user->role->nombre ?? $ganado->user->role_name ?? 'Cliente';
                                     $badgeClass = 'badge-secondary';
@@ -554,16 +681,16 @@
                                         $badgeClass = 'badge-success';
                                     }
                                 @endphp
-                                <span class="badge {{ $badgeClass }} badge-lg px-3 py-1">
+                                <span class="badge {{ $badgeClass }} badge-lg">
                                     <i class="fas fa-user-tag"></i> {{ $roleName }}
                                 </span>
                             </div>
                         @endif
                         
                         @if($ganado->user->created_at)
-                            <div class="mb-0">
-                                <small class="text-muted d-block mb-1">Miembro desde</small>
-                                <strong class="small">
+                            <div class="info-row-item">
+                                <small class="text-muted d-block mb-0 section-title">Miembro Desde</small>
+                                <strong class="info-value">
                                     <i class="fas fa-calendar-check text-success"></i> 
                                     {{ \Carbon\Carbon::parse($ganado->user->created_at)->format('d/m/Y') }}
                                 </strong>
@@ -573,14 +700,14 @@
                     
                     @auth
                         @if(auth()->id() !== $ganado->user_id)
-                            <div class="mt-3 pt-2 border-top">
+                            <div class="mt-2 pt-2 border-top">
                                 <a href="mailto:{{ $ganado->user->email }}" class="btn btn-success btn-sm btn-block shadow-sm">
                                     <i class="fas fa-envelope mr-1"></i> Contactar Vendedor
                                 </a>
                             </div>
                         @endif
                     @else
-                        <div class="mt-3 pt-2 border-top">
+                        <div class="mt-2 pt-2 border-top">
                             <a href="{{ route('login') }}" class="btn btn-outline-success btn-sm btn-block">
                                 <i class="fas fa-sign-in-alt mr-1"></i> Inicia sesión para contactar
                             </a>
@@ -589,6 +716,153 @@
                 </div>
             </div>
             @endif
+
+            {{-- Marca del Animal --}}
+            @if($ganado->datoSanitario && ($ganado->datoSanitario->marca_ganado || $ganado->datoSanitario->senal_numero || $ganado->datoSanitario->marca_ganado_foto))
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tag"></i> Marca del Animal
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @if($ganado->datoSanitario->marca_ganado)
+                            <div class="col-12 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-tag text-primary info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Marca del Ganado</small>
+                                        <strong class="d-block info-value">{{ $ganado->datoSanitario->marca_ganado }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->senal_numero)
+                            <div class="col-12 info-row-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-hashtag text-primary info-icon"></i>
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block mb-0 section-title">Señal o #</small>
+                                        <strong class="d-block info-value">{{ $ganado->datoSanitario->senal_numero }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($ganado->datoSanitario->marca_ganado_foto)
+                            <div class="col-12 info-row-item">
+                                <small class="text-muted d-block mb-1 section-title">Foto de la Marca</small>
+                                <div class="btn-inline-img">
+                                    <a href="{{ asset('storage/'.$ganado->datoSanitario->marca_ganado_foto) }}" 
+                                       target="_blank" 
+                                       class="btn btn-success btn-sm">
+                                        <i class="fas fa-image"></i> Ver Foto
+                                    </a>
+                                    <img src="{{ asset('storage/'.$ganado->datoSanitario->marca_ganado_foto) }}" 
+                                         alt="Foto de la Marca" 
+                                         class="img-thumbnail img-preview-inline" 
+                                         style="max-width: 100px; max-height: 70px; cursor: pointer; object-fit: cover;"
+                                         onclick="window.open('{{ asset('storage/'.$ganado->datoSanitario->marca_ganado_foto) }}', '_blank')"
+                                         title="Click para ver imagen completa">
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Información del Dueño --}}
+            @if($ganado->datoSanitario && ($ganado->datoSanitario->nombre_dueño || $ganado->datoSanitario->carnet_dueño_foto))
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user"></i> Información del Dueño
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if($ganado->datoSanitario->nombre_dueño)
+                        <div class="info-row-item">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-info rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block mb-0 section-title">Nombre del Dueño</small>
+                                    <strong class="d-block info-value">{{ $ganado->datoSanitario->nombre_dueño }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    @if($ganado->datoSanitario->carnet_dueño_foto)
+                        <div class="info-row-item">
+                            <small class="text-muted d-block mb-1 section-title">Carnet del Dueño</small>
+                            <div class="btn-inline-img">
+                                <a href="{{ asset('storage/'.$ganado->datoSanitario->carnet_dueño_foto) }}" 
+                                   target="_blank" 
+                                   class="btn btn-success btn-sm">
+                                    <i class="fas fa-id-card"></i> Ver Carnet
+                                </a>
+                                <img src="{{ asset('storage/'.$ganado->datoSanitario->carnet_dueño_foto) }}" 
+                                     alt="Carnet Dueño" 
+                                     class="img-thumbnail img-preview-inline" 
+                                     style="max-width: 100px; max-height: 70px; cursor: pointer; object-fit: cover;"
+                                     onclick="window.open('{{ asset('storage/'.$ganado->datoSanitario->carnet_dueño_foto) }}', '_blank')"
+                                     title="Click para ver imagen completa">
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
+            {{-- Ubicación --}}
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map-marker-alt"></i> Ubicación
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if($ganado->ciudad || $ganado->municipio || $ganado->departamento)
+                        <div class="info-row-item">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-building text-danger info-icon"></i>
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block mb-0 section-title">Ciudad</small>
+                                    <strong class="d-block info-value">{{ $ganado->ciudad ?? $ganado->municipio ?? 'No disponible' }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-row-item">
+                            <small class="text-muted d-block mb-1 section-title">Dirección</small>
+                            @php
+                                $direccion = [];
+                                if($ganado->municipio) $direccion[] = $ganado->municipio;
+                                if($ganado->provincia) $direccion[] = 'Provincia ' . $ganado->provincia;
+                                if($ganado->departamento) $direccion[] = $ganado->departamento;
+                                $direccion[] = 'Bolivia';
+                                $direccionCompleta = implode(', ', $direccion);
+                            @endphp
+                            <strong class="info-value">{{ $direccionCompleta }}</strong>
+                        </div>
+                    @elseif($ganado->ubicacion)
+                        <div class="info-row-item">
+                            <i class="fas fa-location-dot text-danger info-icon"></i>
+                            <strong class="info-value">{{ $ganado->ubicacion }}</strong>
+                        </div>
+                    @else
+                        <p class="text-muted mb-0 info-value">Sin ubicación especificada</p>
+                    @endif
+                    @if($ganado->latitud && $ganado->longitud)
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-danger btn-sm btn-block" data-toggle="modal" data-target="#mapModal">
+                                <i class="fas fa-map"></i> Ver Mapa
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -231,40 +231,73 @@
         <div class="row">
           @foreach($maquinarias as $maquinaria)
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow-sm rounded-lg border-0">
-                @if($maquinaria->imagenes && $maquinaria->imagenes->count() > 0)
-                  <img src="{{ asset('storage/'.$maquinaria->imagenes->first()->ruta) }}" 
-                       class="card-img-top" 
-                       style="height:200px; object-fit:cover; cursor:pointer;"
-                       onclick="window.open('{{ asset('storage/'.$maquinaria->imagenes->first()->ruta) }}', '_blank')"
-                       alt="{{ $maquinaria->nombre }}">
-                @else
-                  <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-tractor fa-4x text-success"></i>
-                  </div>
-                @endif
-                <div class="card-body">
-                  <h5 class="card-title">{{ $maquinaria->nombre }}</h5>
-                  <p class="card-text text-muted small mb-2">
-                    <i class="fas fa-tag"></i> {{ $maquinaria->tipoMaquinaria->nombre ?? 'N/A' }} | 
-                    <i class="fas fa-industry"></i> {{ $maquinaria->marcaMaquinaria->nombre ?? 'N/A' }}
-                  </p>
-                  <div class="mb-2">
-                    <span class="badge badge-success">{{ $maquinaria->categoria->nombre ?? 'Sin categoría' }}</span>
-                    <span class="badge badge-{{ $maquinaria->estado == 'disponible' ? 'success' : 'secondary' }}">
-                      {{ ucfirst(str_replace('_', ' ', $maquinaria->estado ?? 'N/A')) }}
-                    </span>
-                  </div>
-                  @if($maquinaria->precio_dia)
-                    <p class="h5 text-success mb-0">Bs {{ number_format($maquinaria->precio_dia, 2) }}/día</p>
+              <a href="{{ route('maquinarias.show', $maquinaria->id) }}" class="text-decoration-none" style="color: inherit;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                  @php
+                    $imagenPrincipal = $maquinaria->imagenes->first()->ruta ?? null;
+                  @endphp
+                  @if($imagenPrincipal)
+                    <div class="card-img-wrapper position-relative overflow-hidden">
+                      <img src="{{ asset('storage/'.$imagenPrincipal) }}" 
+                           class="card-img-top ganado-img" 
+                           style="height:220px; object-fit:cover; transition: transform 0.3s ease;"
+                           alt="{{ $maquinaria->nombre }}">
+                      <div class="position-absolute top-0 right-0 m-2">
+                        <span class="badge badge-success badge-lg shadow-sm">
+                          <i class="fas fa-star"></i> Destacado
+                        </span>
+                      </div>
+                    </div>
+                  @else
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                      <i class="fas fa-tractor fa-4x text-muted"></i>
+                    </div>
                   @endif
+                  <div class="card-body p-3">
+                    <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
+                      <i class="fas fa-tag text-success mr-1"></i>{{ $maquinaria->nombre }}
+                    </h5>
+                    <ul class="ad-meta list-unstyled mb-2">
+                      @if($maquinaria->ubicacion)
+                        <li class="mb-1"><i class="fas fa-map-marker-alt text-success"></i> <span class="small">{{ Str::limit($maquinaria->ubicacion, 40) }}</span></li>
+                      @endif
+                      @if($maquinaria->tipoMaquinaria)
+                        <li class="mb-1"><i class="fas fa-cog text-success"></i> <span class="small">{{ $maquinaria->tipoMaquinaria->nombre }}</span></li>
+                      @endif
+                      @if($maquinaria->fecha_publicacion ?? $maquinaria->created_at)
+                        <li class="mb-1"><i class="fas fa-calendar-alt text-success"></i> <span class="small">Publicado: {{ \Carbon\Carbon::parse($maquinaria->fecha_publicacion ?? $maquinaria->created_at)->format('d/m/Y') }}</span></li>
+                      @endif
+                    </ul>
+                    <div class="mb-2">
+                      <span class="badge badge-success badge-lg px-3 py-2 shadow-sm">
+                        <i class="fas fa-tags"></i> {{ $maquinaria->categoria->nombre ?? 'Maquinaria' }}
+                      </span>
+                    </div>
+                    @if($maquinaria->precio_dia)
+                      <div class="bg-success-light p-2 rounded mb-2 border-left border-success border-3">
+                        <small class="text-muted d-block mb-0">Precio</small>
+                        <h4 class="text-success font-weight-bold mb-0">
+                          <i class="fas fa-boliviano-sign"></i> {{ number_format($maquinaria->precio_dia, 2) }}/día
+                        </h4>
+                      </div>
+                    @else
+                      <div class="bg-light p-2 rounded mb-2 border-left border-secondary border-3">
+                        <span class="text-muted small">Precio a consultar</span>
+                      </div>
+                    @endif
+                  </div>
+                  <div class="card-footer d-flex justify-content-between align-items-center bg-white border-top border-success border-2 p-2">
+                    @if($maquinaria->precio_dia)
+                      <span class="price font-weight-bold text-success">Bs {{ number_format($maquinaria->precio_dia, 2) }}/día</span>
+                    @else
+                      <span class="price font-weight-bold text-muted small">Consultar</span>
+                    @endif
+                    <div class="btn btn-success btn-sm px-3 shadow-sm font-weight-bold">
+                      Ver Anuncio <i class="fas fa-arrow-right ml-1"></i>
+                    </div>
+                  </div>
                 </div>
-                <div class="card-footer bg-white border-top">
-                  <a href="{{ route('maquinarias.show', $maquinaria->id) }}" class="btn btn-success btn-sm btn-block">
-                    <i class="fas fa-eye"></i> Ver Detalles
-                  </a>
-                </div>
-              </div>
+              </a>
             </div>
           @endforeach
         </div>
@@ -285,41 +318,73 @@
         <div class="row">
           @foreach($organicos as $organico)
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow-sm rounded-lg border-0">
-                @if($organico->imagenes && $organico->imagenes->count() > 0)
-                  <img src="{{ asset('storage/'.$organico->imagenes->first()->ruta) }}" 
-                       class="card-img-top" 
-                       style="height:200px; object-fit:cover; cursor:pointer;"
-                       onclick="window.open('{{ asset('storage/'.$organico->imagenes->first()->ruta) }}', '_blank')"
-                       alt="{{ $organico->nombre }}">
-                @else
-                  <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-leaf fa-4x text-success"></i>
-                  </div>
-                @endif
-                <div class="card-body">
-                  <h5 class="card-title">{{ $organico->nombre }}</h5>
-                  <p class="card-text text-muted small mb-2">
-                    <i class="fas fa-tag"></i> {{ $organico->categoria->nombre ?? 'Sin categoría' }}
-                    @if($organico->unidad)
-                      | <i class="fas fa-balance-scale"></i> {{ $organico->unidad->nombre }}
-                    @endif
-                  </p>
-                  <div class="mb-2">
-                    @if($organico->stock)
-                      <span class="badge badge-info">Stock: {{ $organico->stock }}</span>
-                    @endif
-                  </div>
-                  @if($organico->precio)
-                    <p class="h5 text-success mb-0">Bs {{ number_format($organico->precio, 2) }}</p>
+              <a href="{{ route('organicos.show', $organico->id) }}" class="text-decoration-none" style="color: inherit;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                  @php
+                    $imagenPrincipal = $organico->imagenes->first()->ruta ?? null;
+                  @endphp
+                  @if($imagenPrincipal)
+                    <div class="card-img-wrapper position-relative overflow-hidden">
+                      <img src="{{ asset('storage/'.$imagenPrincipal) }}" 
+                           class="card-img-top ganado-img" 
+                           style="height:220px; object-fit:cover; transition: transform 0.3s ease;"
+                           alt="{{ $organico->nombre }}">
+                      <div class="position-absolute top-0 right-0 m-2">
+                        <span class="badge badge-success badge-lg shadow-sm">
+                          <i class="fas fa-star"></i> Destacado
+                        </span>
+                      </div>
+                    </div>
+                  @else
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                      <i class="fas fa-leaf fa-4x text-muted"></i>
+                    </div>
                   @endif
+                  <div class="card-body p-3">
+                    <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
+                      <i class="fas fa-tag text-success mr-1"></i>{{ $organico->nombre }}
+                    </h5>
+                    <ul class="ad-meta list-unstyled mb-2">
+                      @if($organico->origen)
+                        <li class="mb-1"><i class="fas fa-map-marker-alt text-success"></i> <span class="small">{{ Str::limit($organico->origen, 40) }}</span></li>
+                      @endif
+                      @if($organico->fecha_cosecha)
+                        <li class="mb-1"><i class="fas fa-calendar-alt text-success"></i> <span class="small">Cosecha: {{ \Carbon\Carbon::parse($organico->fecha_cosecha)->format('d/m/Y') }}</span></li>
+                      @endif
+                      @if($organico->created_at)
+                        <li class="mb-1"><i class="fas fa-calendar-alt text-success"></i> <span class="small">Publicado: {{ \Carbon\Carbon::parse($organico->created_at)->format('d/m/Y') }}</span></li>
+                      @endif
+                    </ul>
+                    <div class="mb-2">
+                      <span class="badge badge-success badge-lg px-3 py-2 shadow-sm">
+                        <i class="fas fa-tags"></i> {{ $organico->categoria->nombre ?? 'Orgánico' }}
+                      </span>
+                    </div>
+                    @if($organico->precio)
+                      <div class="bg-success-light p-2 rounded mb-2 border-left border-success border-3">
+                        <small class="text-muted d-block mb-0">Precio</small>
+                        <h4 class="text-success font-weight-bold mb-0">
+                          <i class="fas fa-boliviano-sign"></i> {{ number_format($organico->precio, 2) }}
+                        </h4>
+                      </div>
+                    @else
+                      <div class="bg-light p-2 rounded mb-2 border-left border-secondary border-3">
+                        <span class="text-muted small">Precio a consultar</span>
+                      </div>
+                    @endif
+                  </div>
+                  <div class="card-footer d-flex justify-content-between align-items-center bg-white border-top border-success border-2 p-2">
+                    @if($organico->precio)
+                      <span class="price font-weight-bold text-success">Bs {{ number_format($organico->precio, 2) }}</span>
+                    @else
+                      <span class="price font-weight-bold text-muted small">Consultar</span>
+                    @endif
+                    <div class="btn btn-success btn-sm px-3 shadow-sm font-weight-bold">
+                      Ver Anuncio <i class="fas fa-arrow-right ml-1"></i>
+                    </div>
+                  </div>
                 </div>
-                <div class="card-footer bg-white border-top">
-                  <a href="{{ route('organicos.show', $organico->id) }}" class="btn btn-success btn-sm btn-block">
-                    <i class="fas fa-eye"></i> Ver Detalles
-                  </a>
-                </div>
-              </div>
+              </a>
             </div>
           @endforeach
         </div>
@@ -480,49 +545,75 @@
         <div class="row">
           @foreach($maquinarias->take(3) as $maquinaria)
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow-sm rounded-lg border-0">
-                @if($maquinaria->imagenes && $maquinaria->imagenes->count() > 0)
-                  <img src="{{ asset('storage/'.$maquinaria->imagenes->first()->ruta) }}" 
-                       class="card-img-top" 
-                       style="height:200px; object-fit:cover; cursor:pointer;"
-                       onclick="window.open('{{ asset('storage/'.$maquinaria->imagenes->first()->ruta) }}', '_blank')"
-                       alt="{{ $maquinaria->nombre }}">
-                @else
-                  <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-tractor fa-4x text-success"></i>
-                  </div>
-                @endif
-                <div class="card-body">
-                  <h5 class="card-title">{{ $maquinaria->nombre }}</h5>
-                  <p class="card-text text-muted small mb-2">
-                    <i class="fas fa-tag"></i> {{ $maquinaria->tipoMaquinaria->nombre ?? 'N/A' }}
-                  </p>
-                  @if($maquinaria->precio_dia)
-                    <p class="h5 text-success mb-0">Bs {{ number_format($maquinaria->precio_dia, 2) }}/día</p>
+              <a href="{{ route('maquinarias.show', $maquinaria->id) }}" class="text-decoration-none" style="color: inherit;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                  @php
+                    $imagenPrincipal = $maquinaria->imagenes->first()->ruta ?? null;
+                  @endphp
+                  @if($imagenPrincipal)
+                    <div class="card-img-wrapper position-relative overflow-hidden">
+                      <img src="{{ asset('storage/'.$imagenPrincipal) }}" 
+                           class="card-img-top ganado-img" 
+                           style="height:220px; object-fit:cover; transition: transform 0.3s ease;"
+                           alt="{{ $maquinaria->nombre }}">
+                      <div class="position-absolute top-0 right-0 m-2">
+                        <span class="badge badge-success badge-lg shadow-sm">
+                          <i class="fas fa-star"></i> Destacado
+                        </span>
+                      </div>
+                    </div>
+                  @else
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                      <i class="fas fa-tractor fa-4x text-muted"></i>
+                    </div>
                   @endif
-                </div>
-                <div class="card-footer bg-white border-top">
-                  <div class="d-flex gap-2">
-                    <a href="{{ route('maquinarias.show', $maquinaria->id) }}" class="btn btn-outline-success btn-sm flex-fill">
-                      <i class="fas fa-eye"></i> Ver
-                    </a>
-                    @auth
-                      @if($maquinaria->precio_dia)
-                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline">
-                          @csrf
-                          <input type="hidden" name="product_type" value="maquinaria">
-                          <input type="hidden" name="product_id" value="{{ $maquinaria->id }}">
-                          <input type="hidden" name="cantidad" value="1">
-                          <input type="hidden" name="dias_alquiler" value="1">
-                          <button type="submit" class="btn btn-success btn-sm" title="Agregar al carrito">
-                            <i class="fas fa-cart-plus"></i>
-                          </button>
-                        </form>
-                      @endif
-                    @endauth
+                  <div class="card-body p-3">
+                    <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
+                      <i class="fas fa-tag text-success mr-1"></i>{{ $maquinaria->nombre }}
+                    </h5>
+                    <div class="mb-2">
+                      <p class="card-text text-muted small mb-1">
+                        <i class="fas fa-map-marker-alt text-success"></i> 
+                        <span class="ml-1">{{ Str::limit($maquinaria->ubicacion ?? 'Sin ubicación', 40) }}</span>
+                      </p>
+                    </div>
+                    <div class="mb-3">
+                      <span class="badge badge-success badge-lg px-3 py-2 shadow-sm">
+                        <i class="fas fa-tags"></i> {{ $maquinaria->categoria->nombre ?? 'Sin categoría' }}
+                      </span>
+                    </div>
+                    @if($maquinaria->precio_dia)
+                      <div class="bg-success-light p-2 rounded mb-2 border-left border-success border-3">
+                        <small class="text-muted d-block mb-0">Precio</small>
+                        <h4 class="text-success font-weight-bold mb-0">
+                          <i class="fas fa-boliviano-sign"></i> {{ number_format($maquinaria->precio_dia, 2) }}/día
+                        </h4>
+                      </div>
+                    @endif
+                  </div>
+                  <div class="card-footer bg-white border-top border-success border-2 p-2">
+                    <div class="d-flex gap-2">
+                      <div class="btn btn-success btn-sm flex-fill shadow-sm font-weight-bold">
+                        <i class="fas fa-eye mr-1"></i> Ver
+                      </div>
+                      @auth
+                        @if($maquinaria->precio_dia)
+                          <form action="{{ route('cart.add') }}" method="POST" class="d-inline" onclick="event.stopPropagation();">
+                            @csrf
+                            <input type="hidden" name="product_type" value="maquinaria">
+                            <input type="hidden" name="product_id" value="{{ $maquinaria->id }}">
+                            <input type="hidden" name="cantidad" value="1">
+                            <input type="hidden" name="dias_alquiler" value="1">
+                            <button type="submit" class="btn btn-success btn-sm shadow-sm" title="Agregar al carrito" onclick="event.stopPropagation();">
+                              <i class="fas fa-cart-plus"></i>
+                            </button>
+                          </form>
+                        @endif
+                      @endauth
+                    </div>
                   </div>
                 </div>
-              </div>
+              </a>
             </div>
           @endforeach
         </div>
@@ -542,48 +633,74 @@
         <div class="row">
           @foreach($organicos->take(3) as $organico)
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow-sm rounded-lg border-0">
-                @if($organico->imagenes && $organico->imagenes->count() > 0)
-                  <img src="{{ asset('storage/'.$organico->imagenes->first()->ruta) }}" 
-                       class="card-img-top" 
-                       style="height:200px; object-fit:cover; cursor:pointer;"
-                       onclick="window.open('{{ asset('storage/'.$organico->imagenes->first()->ruta) }}', '_blank')"
-                       alt="{{ $organico->nombre }}">
-                @else
-                  <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-leaf fa-4x text-success"></i>
-                  </div>
-                @endif
-                <div class="card-body">
-                  <h5 class="card-title">{{ $organico->nombre }}</h5>
-                  <p class="card-text text-muted small mb-2">
-                    <i class="fas fa-tag"></i> {{ $organico->categoria->nombre ?? 'Sin categoría' }}
-                  </p>
-                  @if($organico->precio)
-                    <p class="h5 text-success mb-0">Bs {{ number_format($organico->precio, 2) }}</p>
+              <a href="{{ route('organicos.show', $organico->id) }}" class="text-decoration-none" style="color: inherit;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                  @php
+                    $imagenPrincipal = $organico->imagenes->first()->ruta ?? null;
+                  @endphp
+                  @if($imagenPrincipal)
+                    <div class="card-img-wrapper position-relative overflow-hidden">
+                      <img src="{{ asset('storage/'.$imagenPrincipal) }}" 
+                           class="card-img-top ganado-img" 
+                           style="height:220px; object-fit:cover; transition: transform 0.3s ease;"
+                           alt="{{ $organico->nombre }}">
+                      <div class="position-absolute top-0 right-0 m-2">
+                        <span class="badge badge-success badge-lg shadow-sm">
+                          <i class="fas fa-star"></i> Destacado
+                        </span>
+                      </div>
+                    </div>
+                  @else
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                      <i class="fas fa-leaf fa-4x text-muted"></i>
+                    </div>
                   @endif
-                </div>
-                <div class="card-footer bg-white border-top">
-                  <div class="d-flex gap-2">
-                    <a href="{{ route('organicos.show', $organico->id) }}" class="btn btn-outline-success btn-sm flex-fill">
-                      <i class="fas fa-eye"></i> Ver
-                    </a>
-                    @auth
-                      @if($organico->precio && ($organico->stock ?? 0) > 0)
-                        <form action="{{ route('cart.add') }}" method="POST" class="d-inline">
-                          @csrf
-                          <input type="hidden" name="product_type" value="organico">
-                          <input type="hidden" name="product_id" value="{{ $organico->id }}">
-                          <input type="hidden" name="cantidad" value="1">
-                          <button type="submit" class="btn btn-success btn-sm" title="Agregar al carrito">
-                            <i class="fas fa-cart-plus"></i>
-                          </button>
-                        </form>
-                      @endif
-                    @endauth
+                  <div class="card-body p-3">
+                    <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
+                      <i class="fas fa-tag text-success mr-1"></i>{{ $organico->nombre }}
+                    </h5>
+                    <div class="mb-2">
+                      <p class="card-text text-muted small mb-1">
+                        <i class="fas fa-map-marker-alt text-success"></i> 
+                        <span class="ml-1">{{ Str::limit($organico->origen ?? 'Sin ubicación', 40) }}</span>
+                      </p>
+                    </div>
+                    <div class="mb-3">
+                      <span class="badge badge-success badge-lg px-3 py-2 shadow-sm">
+                        <i class="fas fa-tags"></i> {{ $organico->categoria->nombre ?? 'Sin categoría' }}
+                      </span>
+                    </div>
+                    @if($organico->precio)
+                      <div class="bg-success-light p-2 rounded mb-2 border-left border-success border-3">
+                        <small class="text-muted d-block mb-0">Precio</small>
+                        <h4 class="text-success font-weight-bold mb-0">
+                          <i class="fas fa-boliviano-sign"></i> {{ number_format($organico->precio, 2) }}
+                        </h4>
+                      </div>
+                    @endif
+                  </div>
+                  <div class="card-footer bg-white border-top border-success border-2 p-2">
+                    <div class="d-flex gap-2">
+                      <div class="btn btn-success btn-sm flex-fill shadow-sm font-weight-bold">
+                        <i class="fas fa-eye mr-1"></i> Ver
+                      </div>
+                      @auth
+                        @if($organico->precio && ($organico->stock ?? 0) > 0)
+                          <form action="{{ route('cart.add') }}" method="POST" class="d-inline" onclick="event.stopPropagation();">
+                            @csrf
+                            <input type="hidden" name="product_type" value="organico">
+                            <input type="hidden" name="product_id" value="{{ $organico->id }}">
+                            <input type="hidden" name="cantidad" value="1">
+                            <button type="submit" class="btn btn-success btn-sm shadow-sm" title="Agregar al carrito" onclick="event.stopPropagation();">
+                              <i class="fas fa-cart-plus"></i>
+                            </button>
+                          </form>
+                        @endif
+                      @endauth
+                    </div>
                   </div>
                 </div>
-              </div>
+              </a>
             </div>
           @endforeach
         </div>

@@ -196,36 +196,11 @@ class HomeController extends Controller
         
         $organicos = $organicosQuery->orderBy('created_at', 'desc')->paginate(12, ['*'], 'organicos_page');
         
-        // Obtener publicaciones del vendedor autenticado (si está logueado)
-        $misGanados = collect();
-        $misMaquinarias = collect();
-        $misOrganicos = collect();
-        
-        if (auth()->check() && (auth()->user()->isVendedor() || auth()->user()->isAdmin())) {
-            $misGanados = Ganado::with(['categoria', 'tipoAnimal', 'raza', 'datoSanitario', 'imagenes'])
-                ->where('user_id', auth()->id())
-                ->orderBy('created_at', 'desc')
-                ->get();
-            
-            $misMaquinarias = Maquinaria::with(['categoria', 'tipoMaquinaria', 'marcaMaquinaria', 'imagenes'])
-                ->where('user_id', auth()->id())
-                ->orderBy('created_at', 'desc')
-                ->get();
-            
-            $misOrganicos = Organico::with(['categoria', 'imagenes', 'unidad'])
-                ->where('user_id', auth()->id())
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
-        
         return view('public.ads.index', compact(
             'categorias',
             'ganados',
             'maquinarias',
             'organicos',
-            'misGanados',
-            'misMaquinarias',
-            'misOrganicos',
             'q',
             'categoria_id',
             'tipo'
