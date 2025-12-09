@@ -40,6 +40,44 @@
   .border-success {
     border-color: #28a745 !important;
   }
+  
+  /* Cinta de estado para maquinaria */
+  .estado-cinta {
+    position: absolute;
+    top: 15px;
+    left: -35px;
+    width: 150px;
+    padding: 5px 0;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+    transform: rotate(-45deg);
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  .estado-cinta.disponible {
+    background-color: #28a745;
+  }
+  
+  .estado-cinta.en_mantenimiento {
+    background-color: #ffc107;
+    color: #000;
+  }
+  
+  .estado-cinta.dado_baja {
+    background-color: #dc3545;
+  }
+  
+  .estado-cinta.en_uso {
+    background-color: #007bff;
+  }
+  
+  .maquinaria-card-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
 </style>
 <section class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
@@ -230,10 +268,17 @@
           @foreach($maquinarias as $maquinaria)
             <div class="col-md-6 col-lg-4 mb-4">
               <a href="{{ route('maquinarias.show', $maquinaria->id) }}" class="text-decoration-none" style="color: inherit;">
-                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden" style="cursor: pointer;">
+                <div class="card h-100 ganado-card shadow-lg rounded-lg border-success border-3 overflow-hidden maquinaria-card-wrapper" style="cursor: pointer;">
                   @php
                     $imagenPrincipal = $maquinaria->imagenes->first()->ruta ?? null;
+                    $estadoNombre = $maquinaria->estadoMaquinaria ? strtolower(str_replace(' ', '_', $maquinaria->estadoMaquinaria->nombre)) : 'disponible';
+                    $estadoTexto = $maquinaria->estadoMaquinaria ? ucfirst(str_replace('_', ' ', $maquinaria->estadoMaquinaria->nombre)) : 'Disponible';
                   @endphp
+                  @if($maquinaria->estadoMaquinaria)
+                    <div class="estado-cinta {{ $estadoNombre }}">
+                      {{ $estadoTexto }}
+                    </div>
+                  @endif
                   @if($imagenPrincipal)
                     <div class="card-img-wrapper position-relative overflow-hidden">
                       <img src="{{ asset('storage/'.$imagenPrincipal) }}" 
@@ -247,7 +292,12 @@
                       </div>
                     </div>
                   @else
-                    <div class="ad-img bg-light d-flex align-items-center justify-content-center" style="height:220px; border-bottom: 3px solid #28a745;">
+                    <div class="ad-img bg-light d-flex align-items-center justify-content-center maquinaria-card-wrapper" style="height:220px; border-bottom: 3px solid #28a745; position: relative;">
+                      @if($maquinaria->estadoMaquinaria)
+                        <div class="estado-cinta {{ $estadoNombre }}">
+                          {{ $estadoTexto }}
+                        </div>
+                      @endif
                       <i class="fas fa-tractor fa-4x text-muted"></i>
                     </div>
                   @endif
@@ -345,7 +395,7 @@
                   @endif
                   <div class="card-body p-3">
                     <h5 class="card-title font-weight-bold text-dark mb-2" style="font-size: 1.1rem; line-height: 1.3;">
-                      <i class="fas fa-tag text-success mr-1"></i>{{ $organico->nombre }}
+                      <i class="fas fa-leaf text-success mr-1"></i>{{ $organico->nombre ?? 'Orgánico' }}
                     </h5>
                     <ul class="ad-meta list-unstyled mb-2">
                       @if($organico->origen)
