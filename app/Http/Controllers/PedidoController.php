@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pedido;
+<<<<<<< HEAD
 use App\Models\PedidoDetalle;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
@@ -17,11 +18,29 @@ class PedidoController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+=======
+use Illuminate\Http\Request;
+
+class PedidoController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Pedido::with('user');
+
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        $pedidos = $query->orderBy('fecha_pedido', 'desc')->paginate(15);
+
+        // ANTES: view('admin.pedidos.index')
+>>>>>>> 89fbe6a12fc20e76dae4ad5480f6d14c87d0ca7e
         return view('pedidos.index', compact('pedidos'));
     }
 
     public function show(Pedido $pedido)
     {
+<<<<<<< HEAD
         if ($pedido->user_id !== Auth::id()) {
             abort(403);
         }
@@ -87,4 +106,11 @@ class PedidoController extends Controller
             return redirect()->route('cart.index')->with('error', 'Ocurrió un error al crear el pedido.');
         }
     }
+=======
+        $pedido->load(['user', 'detalles.organico']);
+
+        // ANTES: view('admin.pedidos.show')
+        return view('pedidos.show', compact('pedido'));
+    }
+>>>>>>> 89fbe6a12fc20e76dae4ad5480f6d14c87d0ca7e
 }

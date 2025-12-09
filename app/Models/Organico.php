@@ -65,8 +65,12 @@ class Organico extends Model
     }
 
     public function tipoCultivo()
-{
-    return $this->belongsTo(TipoCultivo::class, 'tipo_cultivo_id');
-}
+    {
+        return $this->belongsTo(TipoCultivo::class, 'tipo_cultivo_id');
+    }
 
+    public function detallesPedidos()
+    {
+        return $this->hasMany(DetallePedido::class);
+    }
 }

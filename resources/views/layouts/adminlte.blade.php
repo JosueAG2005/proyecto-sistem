@@ -74,6 +74,26 @@
 <body class="hold-transition sidebar-mini layout-fixed theme-agro">
 <div class="wrapper">
 
+  <style>
+    table.table thead th,
+    table.table tbody td {
+        color: #000 !important;
+    }
+
+    label, .form-control, input, select, textarea {
+        color: #000 !important;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #000 !important;
+    }
+
+    .card, .card-body, .content-wrapper, .content, .main-footer {
+        color: #000 !important;
+    }
+</style>
+
+
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <ul class="navbar-nav">
@@ -386,6 +406,14 @@
                   <i class="nav-icon fas fa-clipboard-list"></i>
                   <p>Solicitudes de Vendedor</p>
                 </a>
+              </li>
+              <!-- PEDIDOS -->
+              <li class="nav-item">
+                  <a href="{{ route('admin.pedidos.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.pedidos.*') ? 'active' : '' }}">
+                      <i class="nav-icon fas fa-receipt"></i>
+                      <p>Pedidos</p>
+                  </a>
               </li>
             @endif
 
